@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/status");
+        const response = await fetch(import.meta.env.VITE_API_STATUS_URL);
         const data = await response.json();
         setStatus(data);
       } catch (error) {
