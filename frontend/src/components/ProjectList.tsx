@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { getProjects } from "../lib/api";
-
-interface Project {
-  _id: string;
-  name: string;
-  tasks?: any;
-}
+import { Project } from "../types/Types";
 
 const ProjectList = ({ refreshTrigger }: { refreshTrigger: number }) => {
   const [projects, setProjects] = useState<Project[]>([]);
+  console.log(projects);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -83,79 +80,101 @@ const ProjectList = ({ refreshTrigger }: { refreshTrigger: number }) => {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Your Projects and Tasks</h2>
-
       {projects.map((project) => (
         <div
           key={project._id}
           className="mb-8 bg-white shadow rounded-lg overflow-hidden"
         >
-          <div className="bg-gray-50 px-4 py-2 border-b">
-            <h3 className="text-lg font-medium">{project.name}</h3>
+          <div className="bg-gray-50 px-6 py-4 border-b">
+            <h3 className="text-xl font-medium">{project.name}</h3>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <span
+                className={`px-3 py-1 text-xs leading-5 font-semibold rounded-full ${getPriorityColor(
+                  project.priority
+                )}`}
+              >
+                {project.priority}
+              </span>
+              <span
+                className={`px-3 py-1 text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                  project.status
+                )}`}
+              >
+                {project.status}
+              </span>
+              <span className="px-3 py-1 text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                Due: {formatDate(project.deadline)}
+              </span>
+            </div>
           </div>
 
-          {project.tasks && project.tasks.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Task
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Priority
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Deadline
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {project.tasks.map((task: any) => (
-                    <tr key={task._id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">
-                          {task.name}
-                        </div>
-                        {task.description && (
-                          <div className="text-sm text-gray-500">
-                            {task.description}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                            task.status
-                          )}`}
-                        >
-                          {task.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getPriorityColor(
-                            task.priority
-                          )}`}
-                        >
-                          {task.priority}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(task.deadline)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="px-4 py-3 text-gray-500">
-              No tasks for this project yet.
-            </div>
-          )}
+          <div className="px-6 py-4 text-gray-600">
+            {project.description || "No description available"}
+          </div>
+
+          <div className="px-6 pb-6">
+            <h4 className="text-lg font-medium mb-3">Tasks</h4>
+
+            {project.tasks && project.tasks.length > 0 ? (
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                {project.tasks.map((task: any) => (
+                  <div
+                    key={task._id}
+                    className="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                  >
+                    <div className="font-medium text-gray-900 mb-2">
+                      {task.name}
+                    </div>
+
+                    {task.description && (
+                      <div className="text-sm text-gray-500 mb-3">
+                        {task.description}
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span
+                        className={`px-2 py-1 text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                          task.status
+                        )}`}
+                      >
+                        {task.status}
+                      </span>
+                      <span
+                        className={`px-2 py-1 text-xs leading-5 font-semibold rounded-full ${getPriorityColor(
+                          task.priority
+                        )}`}
+                      >
+                        {task.priority}
+                      </span>
+                    </div>
+
+                    <div className="text-sm text-gray-500 mt-3 flex items-center">
+                      <svg
+                        className="h-4 w-4 mr-1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Due: {formatDate(task.deadline)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-gray-500 bg-gray-50 p-4 rounded-lg text-center">
+                No tasks for this project yet.
+              </div>
+            )}
+          </div>
         </div>
       ))}
     </div>

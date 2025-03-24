@@ -28,9 +28,28 @@ export type SignUpFormData = {
 
 export type ProjectFormData = {
   name: string;
+  deadline: Date;
+  status: string;
+  priority: string;
+  description?: string;
+  tasks?: [];
 };
+
+export interface Project {
+  _id: string;
+  name: string;
+  deadline: string;
+  status: string;
+  priority: string;
+  description?: string;
+  tasks?: [];
+}
 export const ProjectSchema: ZodType<ProjectFormData> = z.object({
   name: z.string().nonempty("Project name is required"),
+  deadline: z.coerce.date().min(new Date(), "Deadline must be in the future"),
+  status: z.string().nonempty("Status is required"),
+  priority: z.string().nonempty("Priority is required"),
+  description: z.string().optional(),
 });
 
 export type ValidFieldNames = "firstName" | "lastName" | "email" | "password";

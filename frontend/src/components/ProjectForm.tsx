@@ -15,6 +15,10 @@ const ProjectForm = () => {
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(ProjectSchema),
+    defaultValues: {
+      status: "active",
+      priority: "moderate",
+    },
   });
 
   const {
@@ -25,7 +29,6 @@ const ProjectForm = () => {
     mutationFn: (data: ProjectFormData) => createProject(data),
     onSuccess: () => {
       setErrorMessage("");
-      // Notify parent component
     },
     onError: (error: Error) => {
       setErrorMessage(error.message || "Invalid credentials");
@@ -37,10 +40,21 @@ const ProjectForm = () => {
     CreateProject(data);
   };
 
+  const statusOptions = [
+    { value: "active", label: "Active" },
+    { value: "completed", label: "Completed" },
+  ];
+
+  const priorityOptions = [
+    { value: "low", label: "Low" },
+    { value: "moderate", label: "Medium" },
+    { value: "high", label: "High" },
+  ];
+
   return (
     <>
       <form
-        className="mt-8 flex flex-col p-6 gap-2 rounded-md shadow-md"
+        className="mt-8 flex flex-col p-6 gap-4 rounded-md shadow-md"
         onSubmit={handleSubmit(onSubmit)}
       >
         {isError && (
@@ -59,7 +73,47 @@ const ProjectForm = () => {
           placeholder="Project name"
         />
 
-        <Button type="submit" disabled={isPending} className="w-full">
+        <FormField
+          type="date"
+          label="Deadline"
+          name="deadline"
+          register={register}
+          error={errors.deadline}
+          required={true}
+          min={new Date().getDate()}
+        />
+
+        <FormField
+          type="select"
+          label="Status"
+          name="status"
+          register={register}
+          error={errors.status}
+          required={true}
+          options={statusOptions}
+        />
+
+        <FormField
+          type="select"
+          label="Priority"
+          name="priority"
+          register={register}
+          error={errors.priority}
+          required={true}
+          options={priorityOptions}
+        />
+
+        <FormField
+          type="textarea"
+          label="Description"
+          name="description"
+          register={register}
+          error={errors.description}
+          rows={4}
+          placeholder="Project description (optional)"
+        />
+
+        <Button type="submit" disabled={isPending} className="w-full mt-2">
           {isPending ? "Creating..." : "Create"}
         </Button>
       </form>
