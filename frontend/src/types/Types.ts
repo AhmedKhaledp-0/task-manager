@@ -26,6 +26,13 @@ export type SignUpFormData = {
   password: string;
 };
 
+export type ProjectFormData = {
+  name: string;
+};
+export const ProjectSchema: ZodType<ProjectFormData> = z.object({
+  name: z.string().nonempty("Project name is required"),
+});
+
 export type ValidFieldNames = "firstName" | "lastName" | "email" | "password";
 
 export const SignUpSchema: ZodType<SignUpFormData> = z.object({

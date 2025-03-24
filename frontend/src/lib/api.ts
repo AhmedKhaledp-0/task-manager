@@ -29,6 +29,24 @@ export const registerApi = async (data: SignUpData) => {
   }
 };
 
+export const createProject = async (data: any) => {
+  try {
+    const response = await Api.post("/projects", data);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to create project");
+  }
+};
+
+export const getProjects = async () => {
+  try {
+    const response = await Api.get("/projects");
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch projects");
+  }
+};
+
 // Google OAuth URL
 export const getGoogleAuthUrl = () => `${Api.defaults.baseURL}/auth/google`;
 

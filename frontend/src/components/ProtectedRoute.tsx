@@ -1,7 +1,9 @@
+import Dashboard from "../pages/Dashboard";
+
 const ProtectedRoute = () => {
   return (
     <div>
-      <h1>Protected</h1>
+      <Dashboard />
     </div>
   );
 };
