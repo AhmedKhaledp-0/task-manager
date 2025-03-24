@@ -10,7 +10,6 @@ const options = {
   },
 };
 const Api = axios.create(options);
-console.log("Api", options);
 
 Api.interceptors.response.use(
   (response) => {
