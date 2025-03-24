@@ -23,7 +23,12 @@ export const getProjects = async (
   try {
     if (!userId) throw new Error("Service: user's id's not provided");
 
-    const projects = await Project.find({ userId: userId });
+    const projects = await Project.find({ userId: userId }).select([
+      "name",
+      "deadline",
+      "priority",
+      "status",
+    ]);
 
     return projects;
   } catch (error) {
@@ -37,11 +42,13 @@ export const getProject = async (
   try {
     if (!projectId) throw new Error("project id is not provided");
 
-    const task: ProjectModel | null = await Project.findById(projectId);
+    const project: ProjectModel | null = await Project.findById(
+      projectId
+    ).populate("tasks", ["name", "priority", "deadline", "status"]);
 
-    if (!task) throw Error("project not found");
+    if (!project) throw Error("project not found");
 
-    return task;
+    return project;
   } catch (error) {
     console.log(error);
   }
