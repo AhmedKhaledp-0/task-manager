@@ -1,12 +1,16 @@
 import axios from "axios";
+
+const baseURL = import.meta.env.VITE_API_URL;
+
 const options = {
-  baseURL: "http://localhost:8000",
+  baseURL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 };
 const Api = axios.create(options);
+console.log("Api", options);
 
 Api.interceptors.response.use(
   (response) => {
