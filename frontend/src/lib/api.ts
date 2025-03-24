@@ -14,16 +14,20 @@ export interface SignInData {
 export const login = async (data: SignInData) => {
   try {
     const response = await Api.post("/auth/login", data);
-    // The interceptor returns response.data directly, not the whole response object
     return response;
   } catch (error: any) {
-    // The error is already transformed by the interceptor
     throw new Error(error.message || "Failed to login");
   }
 };
 
-export const registerApi = async (data: SignUpData) =>
-  Api.post("/auth/register", data);
+export const registerApi = async (data: SignUpData) => {
+  try {
+    const response = await Api.post("/auth/register", data);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to register");
+  }
+};
 
 // Google OAuth URL
 export const getGoogleAuthUrl = () => `${Api.defaults.baseURL}/auth/google`;
@@ -31,9 +35,29 @@ export const getGoogleAuthUrl = () => `${Api.defaults.baseURL}/auth/google`;
 // Check if the user is authenticated after Google OAuth callback
 export const checkGoogleAuthStatus = async () => {
   try {
-    const response = await Api.get("/auth/me"); // Assuming you have an endpoint to check auth status
+    const response = await Api.get("/auth/me");
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to verify authentication");
+  }
+};
+
+// Check if user is logged in based on token presence
+export const isAuthenticated = () => {
+  return !!localStorage.getItem("authToken");
+};
+
+// Logout function
+export const logout = () => {
+  localStorage.removeItem("authToken");
+};
+
+// Get current user profile
+export const getUserProfile = async () => {
+  try {
+    const response = await Api.get("/users/profile");
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch user profile");
   }
 };
