@@ -8,6 +8,7 @@ import GoogleButton from "./GoogleButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpSchema, SignUpFormData } from "../types/Types";
+import ThemeToggle from "./ThemeToggle";
 
 const SignUpForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -45,11 +46,14 @@ const SignUpForm = () => {
   return (
     <>
       <form
-        className="mt-8 flex flex-col p-6 gap-2 rounded-md shadow-md"
+        className="mt-8 flex flex-col p-6 gap-2 rounded-md shadow-md bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 "
         onSubmit={handleSubmit(onSubmit)}
       >
+        <div className="self-end">
+          <ThemeToggle />
+        </div>
         {isError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative">
+          <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-md relative">
             <p className="text-sm">{errorMessage || "Registration failed"}</p>
           </div>
         )}
@@ -102,7 +106,7 @@ const SignUpForm = () => {
 
         <Link
           to="/signin"
-          className="font-medium text-sm self-center mt-2 text-indigo-600 hover:text-indigo-500"
+          className="font-medium text-sm self-center mt-2 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
         >
           Already have an account? Sign in
         </Link>

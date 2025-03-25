@@ -11,7 +11,7 @@ export type FormFieldProps = {
   placeholder?: string;
   options?: { value: string; label: string }[];
   rows?: number;
-  min?: number;
+  min?: number | string;
 };
 
 export type SignInFormData = {
@@ -35,15 +35,43 @@ export type ProjectFormData = {
   tasks?: [];
 };
 
-export interface Project {
+export type TaskFormData = {
+  name: string;
+  priority: string;
+  status: string;
+  deadline: Date;
+  description?: string;
+};
+
+export interface Task {
   _id: string;
   name: string;
-  deadline: string;
-  status: string;
-  priority: string;
   description?: string;
-  tasks?: [];
+  status: "todo" | "in-progress" | "completed";
+  deadline: string;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export interface ProjectData {
+  _id: string;
+  name: string;
+  description?: string;
+  status: "active" | "complete";
+  priority: "low" | "moderate" | "high";
+  deadline: string;
+  tasks?: Task[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export const ProjectSchema: ZodType<ProjectFormData> = z.object({
   name: z.string().nonempty("Project name is required"),
   deadline: z.coerce.date().min(new Date(), "Deadline must be in the future"),
@@ -64,6 +92,14 @@ export const SignUpSchema: ZodType<SignUpFormData> = z.object({
 export const SignInSchema: ZodType<SignInFormData> = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export const TaskSchema: ZodType<TaskFormData> = z.object({
+  name: z.string().nonempty("Task name is required"),
+  deadline: z.coerce.date().min(new Date(), "Deadline must be in the future"),
+  status: z.string().nonempty("Status is required"),
+  priority: z.string().nonempty("Priority is required"),
+  description: z.string().optional(),
 });
 
 export type ToastType = "info" | "success" | "warning" | "error";
@@ -91,4 +127,8 @@ export interface ToastContainerProps {
   children: React.ReactNode;
   position?: ToastPosition;
   className?: string;
+}
+
+export interface AuthContextType {
+  data: User;
 }

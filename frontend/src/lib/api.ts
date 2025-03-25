@@ -29,6 +29,28 @@ export const registerApi = async (data: SignUpData) => {
   }
 };
 
+export const getUser = async () => {
+  try {
+    const response = await Api.get("/user");
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch user");
+  }
+};
+// Google OAuth URL
+export const getGoogleAuthUrl = () => `${Api.defaults.baseURL}/auth/google`;
+
+// Check if the user is authenticated after Google OAuth callback
+export const checkGoogleAuthStatus = async () => {
+  try {
+    const response = await Api.get("/auth/me");
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to verify authentication");
+  }
+};
+
+// Projects Api
 export const createProject = async (data: any) => {
   try {
     const response = await Api.post("/projects", data);
@@ -47,35 +69,40 @@ export const getProjects = async () => {
   }
 };
 
-// Google OAuth URL
-export const getGoogleAuthUrl = () => `${Api.defaults.baseURL}/auth/google`;
-
-// Check if the user is authenticated after Google OAuth callback
-export const checkGoogleAuthStatus = async () => {
+export const getProjectById = async (id: string) => {
   try {
-    const response = await Api.get("/auth/me");
+    const response = await Api.get(`/projects/${id}`);
     return response;
   } catch (error: any) {
-    throw new Error(error.message || "Failed to verify authentication");
+    throw new Error(error.message || "Failed to fetch project details");
   }
 };
 
-// Check if user is logged in based on token presence
-export const isAuthenticated = () => {
-  return !!localStorage.getItem("authToken");
-};
-
-// Logout function
-export const logout = () => {
-  localStorage.removeItem("authToken");
-};
-
-// Get current user profile
-export const getUserProfile = async () => {
+export const updateProject = async (id: string, newData: any) => {
   try {
-    const response = await Api.get("/users/profile");
+    const response = await Api.put(`/projects/${id}`, { newData });
     return response;
   } catch (error: any) {
-    throw new Error(error.message || "Failed to fetch user profile");
+    throw new Error(error.message || "Failed to update project");
+  }
+};
+
+export const deleteProject = async (id: string) => {
+  try {
+    const response = await Api.delete(`/projects/${id}`);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to delete project");
+  }
+};
+
+// tasks api
+
+export const createTask = async (data: any) => {
+  try {
+    const response = await Api.post("/tasks", data);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to create task");
   }
 };
