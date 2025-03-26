@@ -163,12 +163,12 @@ const ProjectDetails = () => {
 
         <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 overflow-hidden">
           <div className="p-6">
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-start mb-6">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                   {project?.name}
                 </h1>
-                <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-zinc-400">
+                <div className="flex flex-col md:flex-row    gap-2 text-sm text-gray-500 dark:text-zinc-400 ">
                   <div className="flex items-center">
                     <FontAwesomeIcon icon={faCalendar} className="mr-2" />
                     Due: {project && formatDate(project.deadline)}
@@ -195,16 +195,22 @@ const ProjectDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex space-x-2">
+              <div className="flex w-full md:w-auto gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setIsEditModalOpen(true)}
+                  className="flex-1 min-w-[80px]"
                 >
                   <FontAwesomeIcon icon={faPencil} className="mr-2" />
                   Edit
                 </Button>
-                <Button variant="destructive" size="sm" onClick={handleDelete}>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDelete}
+                  className="flex-1 min-w-[80px]"
+                >
                   <FontAwesomeIcon icon={faTrash} className="mr-2" />
                   Delete
                 </Button>
