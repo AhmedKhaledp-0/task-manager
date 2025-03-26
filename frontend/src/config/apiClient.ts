@@ -22,13 +22,11 @@ Api.interceptors.response.use(
     }
     return response.data;
   },
+
   (error) => {
-    const { status, data } = error.response || { status: 500, data: {} };
-    return Promise.reject({
-      message: data.message || "An error occurred",
-      status,
-      ...data,
-    });
+    const { status, data } = error.response;
+    return Promise.reject({ status, message: data.message });
   }
 );
+
 export default Api;
