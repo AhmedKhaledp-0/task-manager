@@ -1,30 +1,16 @@
-import { useEffect, useState } from "react";
-import { getProjects } from "../lib/api";
-import { ProjectData } from "../types/Types";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../store/store";
+import {
+  selectAllProjects,
+  selectProjectsError,
+  selectProjectsLoading,
+} from "../store/selectors";
 
-const ProjectList = ({ refreshTrigger }: { refreshTrigger: number }) => {
+const ProjectList = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        const response = await getProjects();
-        setProjects(response.data || []);
-        setError("");
-      } catch (err: any) {
-        setError(err.message || "Failed to load tasks");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, [refreshTrigger]);
+  const projects = useAppSelector(selectAllProjects);
+  const loading = useAppSelector(selectProjectsLoading);
+  const error = useAppSelector(selectProjectsError);
 
   const handleProjectClick = (id: string) => {
     navigate(`/project/${id}`);
@@ -84,6 +70,8 @@ const ProjectList = ({ refreshTrigger }: { refreshTrigger: number }) => {
       </div>
     );
   }
+
+  console.log(projects);
 
   return (
     <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">

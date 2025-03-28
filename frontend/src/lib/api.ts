@@ -63,6 +63,8 @@ export const createProject = async (data: any) => {
 export const getProjects = async () => {
   try {
     const response = await Api.get("/projects");
+    console.log("the api response");
+    console.log(response);
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to fetch projects");
@@ -104,5 +106,32 @@ export const createTask = async (data: any) => {
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to create task");
+  }
+};
+
+export const getTask = async (id: string) => {
+  try {
+    const response = await Api.get(`/tasks/${id}`);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch task");
+  }
+};
+
+export const updateTask = async (id: string, newData: any) => {
+  try {
+    const response = await Api.put(`/tasks/${id}`, { newData });
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to update task");
+  }
+};
+
+export const deleteTask = async (id: string) => {
+  try {
+    const response = await Api.delete(`/tasks/${id}`);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to delete task");
   }
 };

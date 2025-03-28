@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProjectData, ProjectFormData } from "../types/Types";
+import { ProjectData, ProjectFormData, Task } from "../types/Types";
 import { deleteProject, getProjectById, updateProject } from "../lib/api";
 import Button from "../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +14,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "../components/Toast";
 import ProjectFormModal from "../components/ProjectFormModal";
+import TaskModal from "../components/TaskModal";
+import StatusBadge from "../components/StatusBadge";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -23,6 +25,8 @@ const ProjectDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -135,6 +139,66 @@ const ProjectDetails = () => {
     });
   };
 
+  const refreshProject = async () => {
+    if (!id) return;
+    
+    try {
+      const response = await getProjectById(id);
+      setProject(response.data);
+      
+      // Update selectedTask with the refreshed task data if it exists
+      if (selectedTask && response.data.tasks) {
+        const updatedTask = response.data.tasks.find((task: Task) => task._id === selectedTask._id);
+        if (updatedTask) {
+          setSelectedTask(updatedTask);
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to refresh project details");
+    }
+  };
+
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+    setIsTaskModalOpen(true);
+  };
+
+  const handleTaskUpdated = (updatedTask?: Task) => {
+    if (!project || !project.tasks) return;
+    
+    if (updatedTask) {
+      // Update the task in the project's tasks array
+      const updatedTasks = project.tasks.map(task => 
+        task._id === updatedTask._id ? updatedTask : task
+      );
+      
+      // Update the project with the new tasks array
+      setProject({
+        ...project,
+        tasks: updatedTasks
+      });
+      
+      // Update the selected task
+      setSelectedTask(updatedTask);
+    } else {
+      // Task was deleted, refresh the project data
+      refreshProject();
+    }
+  };
+
+  // Convert task status to StatusBadge status type
+  const getStatusType = (status: string): "inProgress" | "done" | "toDo" => {
+    switch (status) {
+      case "in-progress":
+        return "inProgress";
+      case "completed":
+        return "done";
+      case "todo":
+      default:
+        return "toDo";
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
@@ -152,7 +216,7 @@ const ProjectDetails = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="p-6">
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <Button variant="ghost" onClick={() => navigate(-1)}>
@@ -237,7 +301,8 @@ const ProjectDetails = () => {
                   {project.tasks.map((task) => (
                     <div
                       key={task._id}
-                      className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-gray-200 dark:border-zinc-700"
+                      className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-gray-200 dark:border-zinc-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700/50 transition-colors"
+                      onClick={() => handleTaskClick(task)}
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -250,13 +315,16 @@ const ProjectDetails = () => {
                             </p>
                           )}
                         </div>
-                        <span
-                          className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                            task.status
-                          )}`}
-                        >
-                          {task.status}
-                        </span>
+                        <div className="flex space-x-2">
+                          <span
+                            className={`px-2.5 py-1 text-xs font-medium rounded-full ${getPriorityColor(
+                              task.priority
+                            )}`}
+                          >
+                            {task.priority}
+                          </span>
+                          <StatusBadge status={getStatusType(task.status)} className="scale-75 origin-right" />
+                        </div>
                       </div>
                       <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-zinc-400">
                         <FontAwesomeIcon icon={faCalendar} className="mr-2" />
@@ -288,6 +356,15 @@ const ProjectDetails = () => {
             deadline: new Date(project.deadline),
           }}
           title="Edit Project"
+        />
+      )}
+
+      {selectedTask && (
+        <TaskModal
+          isOpen={isTaskModalOpen}
+          onClose={() => setIsTaskModalOpen(false)}
+          task={selectedTask}
+          onTaskUpdated={handleTaskUpdated}
         />
       )}
     </div>

@@ -1,25 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProjectList from "./ProjectList";
 import Button from "./Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ProjectFormModal from "./ProjectFormModal";
 import { ProjectFormData } from "../types/Types";
-import { createProject } from "../lib/api";
 import { useToast } from "./Toast";
+import { useAppDispatch } from "../store/store";
+import { addProject, fetchProjects } from "../store/slices/projectSlice";
 
 const Projects = () => {
-  const [refreshTaskList, setRefreshTaskList] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { addToast } = useToast();
+  const dispatch = useAppDispatch();
 
-  const refreshList = () => {
-    setRefreshTaskList((prevState) => prevState + 1);
-  };
+  useEffect(() => {
+    dispatch(fetchProjects());
+  }, [dispatch]);
 
   const handleAddProject = async (data: ProjectFormData) => {
     try {
-      await createProject(data);
+      await dispatch(addProject(data)).unwrap();
       addToast({
         type: "success",
         title: "Success",
@@ -27,7 +28,6 @@ const Projects = () => {
         duration: 3000,
       });
       setIsAddModalOpen(false);
-      refreshList();
     } catch (err: any) {
       addToast({
         type: "error",
@@ -51,7 +51,7 @@ const Projects = () => {
       </div>
 
       <div className="overflow-auto">
-        <ProjectList refreshTrigger={refreshTaskList} />
+        <ProjectList />
       </div>
 
       <ProjectFormModal
