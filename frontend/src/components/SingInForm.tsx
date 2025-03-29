@@ -1,9 +1,9 @@
 import Button from "./Button";
 import { FormField } from "./FormField";
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { login, SignInData, checkGoogleAuthStatus } from "../lib/api";
+import { login, SignInData } from "../lib/api";
 import GoogleButton from "./GoogleButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,28 +13,14 @@ import ThemeToggle from "./ThemeToggle";
 const SignInForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
+
   const {
     register,
-    handleSubmit,
+    handleSubmit, 
     formState: { errors },
   } = useForm<SignInData>({
     resolver: zodResolver(SignInSchema),
   });
-
-  useEffect(() => {
-    if (location.search.includes("googleAuth=success")) {
-      const verifyGoogleAuth = async () => {
-        try {
-          await checkGoogleAuthStatus();
-          navigate("/dashboard", { replace: true });
-        } catch (error: any) {
-          setErrorMessage(error.message || "Google authentication failed");
-        }
-      };
-      verifyGoogleAuth();
-    }
-  }, [location, navigate]);
 
   const {
     mutate: signIn,

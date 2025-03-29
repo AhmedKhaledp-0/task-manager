@@ -26,7 +26,6 @@ const Dashboard = () => {
     const fetchProjectsWithTasks = async () => {
       try {
         const response = await dispatch(fetchProjects()).unwrap();
-        console.log("Fetched projects:", response);
         const projectsWithTasks = await Promise.all(
           response.map(async (project: ProjectData) => {
             const projectDetails = await dispatch(
@@ -212,10 +211,10 @@ const Dashboard = () => {
             </div>
             <div className="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4 flex flex-col">
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-              High Priority Tasks
+                High Priority Tasks
               </h3>
               <p className="text-3xl font-semibold text-red-600 dark:text-red-400 flex-grow flex items-center justify-center">
-              {taskStats.highPriorityTasks}
+                {taskStats.highPriorityTasks}
               </p>
             </div>
           </div>

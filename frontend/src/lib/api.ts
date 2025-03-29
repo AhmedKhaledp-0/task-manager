@@ -48,11 +48,12 @@ export const getUser = async () => {
 };
 // Google OAuth URL
 export const getGoogleAuthUrl = () => `${Api.defaults.baseURL}/auth/google`;
+console.log("Google Auth URL:", getGoogleAuthUrl());
 
 // Check if the user is authenticated after Google OAuth callback
 export const checkGoogleAuthStatus = async () => {
   try {
-    const response = await Api.get("/auth/me");
+    const response = await Api.get("/user");
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to verify authentication");

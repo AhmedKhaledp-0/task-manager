@@ -8,6 +8,7 @@ import Profile from "./components/Profile";
 import Projects from "./components/Projects";
 import Tasks from "./pages/Tasks";
 import Error from "./pages/Error";
+import GoogleCallback from "./pages/GoogleCallback";
 import { useAppSelector } from "./store/store";
 import { selectEffectiveTheme } from "./store/slices/themeSlice";
 import { useEffect } from "react";
@@ -33,6 +34,7 @@ function App() {
           </Route>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </div>

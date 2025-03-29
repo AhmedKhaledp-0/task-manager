@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { getGoogleAuthUrl } from "../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
@@ -9,7 +9,7 @@ interface GoogleButtonProps {
   className?: string;
 }
 
-const GoogleButton: React.FC<GoogleButtonProps> = ({
+const GoogleButton: FC<GoogleButtonProps> = ({
   text = "Sign in with Google",
 }) => {
   const handleGoogleLogin = () => {
