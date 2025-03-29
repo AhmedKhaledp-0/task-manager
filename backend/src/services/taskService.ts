@@ -1,6 +1,7 @@
-import { Types } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import { Task } from "../models/Task";
 import { TaskModel } from "../types/schemas";
+import { Project } from "../models/Project";
 
 export const getTask = async (
   taskId: Types.ObjectId
@@ -24,7 +25,14 @@ export const createTask = async (
   try {
     if (!taskData) throw new Error("Service: task data's not provided");
 
-    const task: TaskModel = await Task.create(taskData);
+    const task: HydratedDocument<TaskModel> = await Task.create(taskData);
+
+    if (!task) throw new Error("Service: failed to create task");
+
+    await Project.updateOne(
+      { _id: taskData.projectId },
+      { $push: { tasks: task.id } }
+    );
 
     return task;
   } catch (error) {
@@ -48,9 +56,17 @@ export const updateTask = async (
 
 export const deleteTask = async (taskId: Types.ObjectId) => {
   try {
-    if (!taskId) throw new Error("Service: task id's not provided");
+    if (!taskId) throw new Error("Service: task or project id's not provided");
 
-    await Task.deleteOne({ _id: taskId });
+    const deletedTask: HydratedDocument<TaskModel> | null =
+      await Task.findOneAndDelete({ _id: taskId });
+
+    if (!deletedTask) throw new Error("Serive: failed to delete task");
+
+    await Project.updateOne(
+      { _id: deletedTask.projectId },
+      { $pull: { tasks: taskId } }
+    );
   } catch (error) {
     console.error(error);
   }

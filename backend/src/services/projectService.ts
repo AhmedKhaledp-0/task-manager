@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { Project } from "../models/Project";
 import { ProjectModel } from "../types/schemas";
 import agenda from "../configs/agenda";
+import { User } from "../models/User";
 
 export const createProject = async (
   projectData: ProjectModel
@@ -10,6 +11,15 @@ export const createProject = async (
     if (!projectData) throw new Error("Service: project data's not provided");
 
     const project = await Project.create(projectData);
+
+    if (!project) throw new Error("Service: failed to create project");
+
+    await User.updateOne(
+      { _id: projectData.userId },
+      {
+        $push: { projects: project.id },
+      }
+    );
 
     return project;
   } catch (error) {
@@ -70,13 +80,19 @@ export const updateProject = async (
   }
 };
 
-export const deleteProject = async (projectId: Types.ObjectId) => {
+export const deleteProject = async (
+  projectId: Types.ObjectId,
+  userId: Types.ObjectId
+) => {
   try {
-    if (!projectId) throw new Error("Service: project id's not provided");
+    if (!projectId || !userId)
+      throw new Error("Service: project or user id's not provided");
 
     await Project.deleteOne({ _id: projectId });
 
-    agenda.now("delete project tasks", { projectId: projectId });
+    await User.updateOne({ _id: userId }, { $pull: { projects: projectId } });
+
+    await agenda.now("delete project tasks", projectId);
   } catch (error) {
     console.error(error);
   }

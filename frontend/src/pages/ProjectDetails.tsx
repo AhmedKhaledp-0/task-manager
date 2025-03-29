@@ -1,28 +1,33 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProjectData, ProjectFormData } from "../types/Types";
+import { ProjectData, ProjectFormData, Task } from "../types/Types";
 import { deleteProject, getProjectById, updateProject } from "../lib/api";
-import Button from "../components/Button";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setSelectedTask } from "../store/slices/taskSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faCalendar,
-  faFlag,
-  faListCheck,
-  faPencil,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
+import Button from "../components/Button";
 import { useToast } from "../components/Toast";
 import ProjectFormModal from "../components/ProjectFormModal";
+import TaskModal from "../components/TaskModal";
+import CreateTaskModal from "../components/CreateTaskModal";
+import TaskListItem from "../components/TaskListItem";
+import Spinner from "../components/Spinner";
+import ProjectHeader from "../components/project/ProjectHeader";
 
 const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { addToast } = useToast();
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tasksLoading, setTasksLoading] = useState(false);
   const [error, setError] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
+  const selectedTask = useAppSelector((state) => state.tasks.selectedTask);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -84,7 +89,7 @@ const ProjectDetails = () => {
         description: data.description,
         status: data.status as "active" | "complete",
         priority: data.priority as "low" | "moderate" | "high",
-        deadline: data.deadline.toISOString(),
+        deadline: data.deadline.toString(),
       });
       setIsEditModalOpen(false);
       addToast({
@@ -103,42 +108,55 @@ const ProjectDetails = () => {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
-      case "moderate":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-      case "low":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-300";
+  const refreshProject = async () => {
+    if (!id) return;
+
+    try {
+      setTasksLoading(true);
+      const response = await getProjectById(id);
+      setProject(response.data);
+    } catch (err: any) {
+      setError(err.message || "Failed to refresh project details");
+    } finally {
+      setTasksLoading(false);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "complete":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-      case "active":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-300";
+  const handleTaskClick = (task: Task) => {
+    dispatch(setSelectedTask(task));
+    setIsTaskModalOpen(true);
+  };
+
+  const handleTaskUpdated = (updatedTask?: Task) => {
+    if (!project || !project.tasks) return;
+
+    if (updatedTask) {
+      const updatedTasks = project.tasks.map((task) =>
+        task._id === updatedTask._id ? updatedTask : task
+      );
+
+      setProject({
+        ...project,
+        tasks: updatedTasks,
+      });
+    } else {
+      refreshProject();
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+  const handleTaskCreated = (task: Task) => {
+    if (!project || !project.tasks) return;
+
+    setProject({
+      ...project,
+      tasks: [...project.tasks, task],
     });
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -152,7 +170,7 @@ const ProjectDetails = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="p-6">
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <Button variant="ghost" onClick={() => navigate(-1)}>
@@ -160,57 +178,14 @@ const ProjectDetails = () => {
             Back to Projects
           </Button>
         </div>
+        <ProjectHeader
+          project={project}
+          setIsEditModalOpen={setIsEditModalOpen}
+          handleDelete={handleDelete}
+        />
 
         <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 overflow-hidden">
           <div className="p-6">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  {project?.name}
-                </h1>
-                <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-zinc-400">
-                  <div className="flex items-center">
-                    <FontAwesomeIcon icon={faCalendar} className="mr-2" />
-                    Due: {project && formatDate(project.deadline)}
-                  </div>
-                  <div className="flex items-center">
-                    <FontAwesomeIcon icon={faFlag} className="mr-2" />
-                    <span
-                      className={`px-2.5 py-1 text-xs font-medium rounded-full ${getPriorityColor(
-                        project?.priority || ""
-                      )}`}
-                    >
-                      {project?.priority}
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <FontAwesomeIcon icon={faListCheck} className="mr-2" />
-                    <span
-                      className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                        project?.status || ""
-                      )}`}
-                    >
-                      {project?.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsEditModalOpen(true)}
-                >
-                  <FontAwesomeIcon icon={faPencil} className="mr-2" />
-                  Edit
-                </Button>
-                <Button variant="destructive" size="sm" onClick={handleDelete}>
-                  <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                  Delete
-                </Button>
-              </div>
-            </div>
-
             {project?.description && (
               <div className="prose dark:prose-invert max-w-none mb-6">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -223,46 +198,25 @@ const ProjectDetails = () => {
             )}
 
             <div className="border-t border-gray-200 dark:border-zinc-700 pt-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Tasks
-              </h2>
-              {project?.tasks && project.tasks.length > 0 ? (
-                <div className="space-y-4">
-                  {project.tasks.map((task) => (
-                    <div
-                      key={task._id}
-                      className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-gray-200 dark:border-zinc-700"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-medium text-gray-900 dark:text-white">
-                            {task.name}
-                          </h3>
-                          {task.description && (
-                            <p className="text-sm text-gray-600 dark:text-zinc-400 mt-1">
-                              {task.description}
-                            </p>
-                          )}
-                        </div>
-                        <span
-                          className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                            task.status
-                          )}`}
-                        >
-                          {task.status}
-                        </span>
-                      </div>
-                      <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-zinc-400">
-                        <FontAwesomeIcon icon={faCalendar} className="mr-2" />
-                        Due: {formatDate(task.deadline)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800/50 rounded-lg">
-                  No tasks for this project yet.
-                </div>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Tasks
+                </h2>
+                <Button
+                  size="sm"
+                  onClick={() => setIsCreateTaskModalOpen(true)}
+                >
+                  <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                  Add Task
+                </Button>
+              </div>
+
+              {project && (
+                <TaskListItem
+                  project={project}
+                  onTaskClick={handleTaskClick}
+                  loading={tasksLoading}
+                />
               )}
             </div>
           </div>
@@ -282,6 +236,27 @@ const ProjectDetails = () => {
             deadline: new Date(project.deadline),
           }}
           title="Edit Project"
+        />
+      )}
+
+      {selectedTask && (
+        <TaskModal
+          isOpen={isTaskModalOpen}
+          onClose={() => {
+            setIsTaskModalOpen(false);
+            dispatch(setSelectedTask(null));
+          }}
+          task={selectedTask}
+          onTaskUpdated={handleTaskUpdated}
+        />
+      )}
+
+      {id && (
+        <CreateTaskModal
+          projectId={id}
+          isOpen={isCreateTaskModalOpen}
+          onClose={() => setIsCreateTaskModalOpen(false)}
+          onTaskCreated={handleTaskCreated}
         />
       )}
     </div>

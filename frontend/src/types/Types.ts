@@ -8,6 +8,7 @@ export type FormFieldProps = {
   register: UseFormRegister<any>;
   error?: FieldError;
   required?: boolean | string;
+  value?: string;
   placeholder?: string;
   options?: { value: string; label: string }[];
   rows?: number;
@@ -28,7 +29,7 @@ export type SignUpFormData = {
 
 export type ProjectFormData = {
   name: string;
-  deadline: Date;
+  deadline: Date | string;
   status: string;
   priority: string;
   description?: string;
@@ -40,6 +41,7 @@ export type TaskFormData = {
   priority: string;
   status: string;
   deadline: Date;
+  projectId: string;
   description?: string;
 };
 
@@ -48,6 +50,7 @@ export interface Task {
   name: string;
   description?: string;
   status: "todo" | "in-progress" | "completed";
+  priority: "low" | "moderate" | "high";
   deadline: string;
   createdAt: string;
   updatedAt: string;
@@ -99,6 +102,7 @@ export const TaskSchema: ZodType<TaskFormData> = z.object({
   deadline: z.coerce.date().min(new Date(), "Deadline must be in the future"),
   status: z.string().nonempty("Status is required"),
   priority: z.string().nonempty("Priority is required"),
+  projectId: z.string().nonempty("Project is required"),
   description: z.string().optional(),
 });
 

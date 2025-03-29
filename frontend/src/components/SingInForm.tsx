@@ -60,10 +60,10 @@ const SignInForm = () => {
   return (
     <>
       <form
-        className="mt-8 flex flex-col p-6 gap-2 rounded-md shadow-md bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 relative"
+        className="mt-8 flex flex-col p-6 gap-2 rounded-md shadow-md bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="absolute top-4 right-4">
+        <div className="self-end">
           <ThemeToggle />
         </div>
         {isError && (

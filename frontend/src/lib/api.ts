@@ -115,3 +115,30 @@ export const createTask = async (data: any) => {
     throw new Error(error.message || "Failed to create task");
   }
 };
+
+export const getTask = async (id: string) => {
+  try {
+    const response = await Api.get(`/tasks/${id}`);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch task");
+  }
+};
+
+export const updateTask = async (id: string, newData: any) => {
+  try {
+    const response = await Api.put(`/tasks/${id}`, { newData });
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to update task");
+  }
+};
+
+export const deleteTask = async (id: string) => {
+  try {
+    const response = await Api.delete(`/tasks/${id}`);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to delete task");
+  }
+};

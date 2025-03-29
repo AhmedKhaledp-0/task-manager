@@ -8,8 +8,10 @@ import { Task } from "../../src/models/Task";
 import { faker } from "@faker-js/faker";
 import { TaskModel } from "../../src/types/schemas";
 import { Types } from "mongoose";
+import { Project } from "../../src/models/Project";
 
 jest.mock("../../src/models/Task");
+jest.mock("../../src/models/Project");
 
 describe("task service testing", () => {
   const id: Types.ObjectId = new Types.ObjectId(
@@ -24,12 +26,16 @@ describe("task service testing", () => {
     projectId: new Types.ObjectId(faker.database.mongodbObjectId()),
   };
 
+  afterEach(() => jest.clearAllMocks);
+
   test("create new task test", async () => {
-    Task.create = jest.fn();
+    Task.create = jest.fn().mockResolvedValue(task);
+    jest.spyOn(Project, "updateOne");
 
     await createTask(task);
 
     expect(Task.create).toHaveBeenCalledWith(task);
+    expect(Project.updateOne).toHaveBeenCalled();
   });
 
   test("get task data", async () => {
@@ -58,10 +64,12 @@ describe("task service testing", () => {
   });
 
   test("delete task test", async () => {
-    Task.deleteOne = jest.fn();
+    Task.findOneAndDelete = jest.fn().mockResolvedValue(task);
+    jest.spyOn(Project, "updateOne");
 
     await deleteTask(id);
 
-    expect(Task.deleteOne).toHaveBeenCalledWith({ _id: id });
+    expect(Task.findOneAndDelete).toHaveBeenCalled();
+    expect(Project.updateOne).toHaveBeenCalled();
   });
 });
