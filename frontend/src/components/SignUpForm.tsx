@@ -1,7 +1,7 @@
 import Button from "./Button";
 import { FormField } from "./FormField";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { registerApi, SignUpData } from "../lib/api";
 import GoogleButton from "./GoogleButton";
@@ -104,12 +104,13 @@ const SignUpForm = () => {
 
         <GoogleButton className="w-full" />
 
-        <Link
-          to="/signin"
-          className="font-medium text-sm self-center mt-2 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+        <Button
+          onClick={() => navigate("/signin")}
+          className="!bg-transparent font-medium text-sm self-center mt-2 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
         >
-          Already have an account? Sign in
-        </Link>
+          Already have an account?
+          <span className="text-gray-300"> Sign in </span>
+        </Button>
       </form>
     </>
   );
