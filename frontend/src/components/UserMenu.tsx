@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-// import { logout } from "../lib/api";
+import { logout } from "../lib/api";
+import { useMutation } from "@tanstack/react-query";
 
 const UserMenu = () => {
   const { data } = useAuth();
@@ -12,6 +13,17 @@ const UserMenu = () => {
   // @ts-ignore - We know response has a user property
 
   const { firstName, lastName, email } = data?.user || {};
+
+  const { mutate: handleLogout, isPending, isError, error } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      window.location.href = "/signin";
+    },
+    onError: (error: Error) => {
+      console.error("Logout failed:", error.message);
+    },
+  });
+  
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -74,11 +86,17 @@ const UserMenu = () => {
           <button
             
             className="flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
-            // onClick={logout}
+            onClick={() => handleLogout()}
+            disabled={isPending} // Disable button while logging out
           >
             <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4 mr-3" />
-            Sign out
+            {isPending ? "Signing out..." : "Sign out"}
           </button>
+          {isError && (
+            <p className="text-red-500 text-sm mt-2">
+              {error?.message || "Logout failed. Please try again."}
+            </p>
+          )}
         </div>
       </div>
     </div>
