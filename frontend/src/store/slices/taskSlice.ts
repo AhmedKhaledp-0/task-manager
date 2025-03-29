@@ -43,8 +43,8 @@ export const createNewTask = createAsyncThunk(
 export const updateExistingTask = createAsyncThunk(
   "tasks/updateTask",
   async ({ id, data }: { id: string; data: any }) => {
-    const response = await updateTask(id, data);
-    return response.data;
+    await updateTask(id, data);
+    return { ...data, _id: id };
   }
 );
 

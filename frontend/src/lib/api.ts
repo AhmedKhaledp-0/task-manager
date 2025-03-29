@@ -21,12 +21,12 @@ export const login = async (data: SignInData) => {
 };
 
 // LogOut functionality
-export const logout = async() => {
+export const logout = async () => {
   try {
     await Api.delete("/auth/logout");
   } catch (error: any) {
     throw new Error(error.message || "Failed to log out");
-   } 
+  }
 };
 
 export const registerApi = async (data: SignUpData) => {
@@ -127,7 +127,7 @@ export const getTask = async (id: string) => {
 
 export const updateTask = async (id: string, newData: any) => {
   try {
-    const response = await Api.put(`/tasks/${id}`, { newData });
+    const response = await Api.put(`/tasks/${id}`, newData);
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to update task");
