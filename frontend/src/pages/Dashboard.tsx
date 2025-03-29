@@ -11,6 +11,8 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchProjects } from "../store/slices/projectSlice";
 import Button from "../components/Button";
 import { statsCardsList } from "../utils/list";
+import Spinner from "../components/Spinner";
+import { formatDate } from "../utils/utils";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -53,15 +55,10 @@ const Dashboard = () => {
       .slice(0, 3);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <Spinner />
       </div>
     );
   }

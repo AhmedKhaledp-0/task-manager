@@ -28,8 +28,6 @@ export const fetchProjects = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await getProjects();
-      console.log("the slice responce");
-      console.log(response.data);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to load projects");

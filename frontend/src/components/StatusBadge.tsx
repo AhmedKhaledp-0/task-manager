@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
 
-type StatusType = "inProgress" | "done" | "toDo";
+type StatusType = "in-progress" | "completed" | "todo";
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -17,23 +17,22 @@ export const StatusBadge: FC<StatusBadgeProps> = ({
   status,
   className = "",
 }) => {
-  // Configuration for each status type
   const statusConfig = {
-    inProgress: {
+    "in-progress": {
       bg: "bg-yellow-100 dark:bg-yellow-900/30",
       border: "border-yellow-200 dark:border-yellow-800",
       text: "text-yellow-800 dark:text-yellow-300",
       label: "In Progress",
       icon: <FontAwesomeIcon icon={faClock} className="mr-1.5" />,
     },
-    done: {
+    completed: {
       bg: "bg-green-100 dark:bg-green-900/30",
       border: "border-green-200 dark:border-green-800",
       text: "text-green-800 dark:text-green-300",
       label: "Completed",
       icon: <FontAwesomeIcon icon={faCircleCheck} className="mr-1.5" />,
     },
-    toDo: {
+    todo: {
       bg: "bg-blue-100 dark:bg-blue-900/30",
       border: "border-blue-200 dark:border-blue-800",
       text: "text-blue-800 dark:text-blue-300",

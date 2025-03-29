@@ -8,6 +8,7 @@ export type FormFieldProps = {
   register: UseFormRegister<any>;
   error?: FieldError;
   required?: boolean | string;
+  value?: string;
   placeholder?: string;
   options?: { value: string; label: string }[];
   rows?: number;
@@ -28,7 +29,7 @@ export type SignUpFormData = {
 
 export type ProjectFormData = {
   name: string;
-  deadline: Date;
+  deadline: Date | string;
   status: string;
   priority: string;
   description?: string;

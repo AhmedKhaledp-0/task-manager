@@ -3,10 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Button from "./Button";
 import { useToast } from "./Toast";
-import { deleteTask } from "../lib/api";
 import { Task } from "../types/Types";
 import TaskEditForm from "./TaskEditForm";
 import StatusBadge from "./StatusBadge";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  deleteExistingTask,
+  updateExistingTask,
+} from "../store/slices/taskSlice";
+import { formatDate, getPriorityColor } from "../utils/utils";
 
 interface TaskModalProps {
   task: Task;
@@ -21,58 +26,25 @@ const TaskModal = ({
   onClose,
   onTaskUpdated,
 }: TaskModalProps) => {
+  const dispatch = useAppDispatch();
   const { addToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task>(task);
+  const loading = useAppSelector((state) => state.tasks.loading);
 
-  // Update currentTask when task prop changes
   if (task._id !== currentTask._id) {
     setCurrentTask(task);
   }
 
   if (!isOpen) return null;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
-      case "moderate":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-      case "low":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-300";
-    }
-  };
-
-  // Convert task status to StatusBadge status type
-  const getStatusType = (status: string): "inProgress" | "done" | "toDo" => {
-    switch (status) {
-      case "in-progress":
-        return "inProgress";
-      case "completed":
-        return "done";
-      case "todo":
-      default:
-        return "toDo";
-    }
-  };
-
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
 
     try {
       setIsDeleting(true);
-      await deleteTask(currentTask._id);
+      await dispatch(deleteExistingTask(currentTask._id)).unwrap();
       addToast({
         type: "success",
         title: "Success",
@@ -80,7 +52,7 @@ const TaskModal = ({
         duration: 3000,
       });
       onClose();
-      onTaskUpdated(); // No task parameter means it was deleted
+      onTaskUpdated();
     } catch (err: any) {
       addToast({
         type: "error",
@@ -101,10 +73,26 @@ const TaskModal = ({
     setIsEditing(false);
   };
 
-  const handleSaveEdit = (updatedTask: Task) => {
-    setCurrentTask(updatedTask);
-    setIsEditing(false);
-    onTaskUpdated(updatedTask);
+  const handleSaveEdit = async (updatedTask: Task) => {
+    try {
+      const result = await dispatch(
+        updateExistingTask({
+          id: currentTask._id,
+          data: updatedTask,
+        })
+      ).unwrap();
+
+      setCurrentTask(result);
+      setIsEditing(false);
+      onTaskUpdated(result);
+    } catch (err: any) {
+      addToast({
+        type: "error",
+        title: "Error",
+        message: err.message || "Failed to update task",
+        duration: 5000,
+      });
+    }
   };
 
   return (
@@ -152,7 +140,7 @@ const TaskModal = ({
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Status
                     </h4>
-                    <StatusBadge status={getStatusType(currentTask.status)} />
+                    <StatusBadge status={currentTask.status} />
                   </div>
 
                   <div>
@@ -176,15 +164,6 @@ const TaskModal = ({
                       {formatDate(currentTask.deadline)}
                     </p>
                   </div>
-
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Created
-                    </h4>
-                    <p className="text-gray-600 dark:text-zinc-400">
-                      {formatDate(currentTask.createdAt)}
-                    </p>
-                  </div>
                 </div>
               </div>
 
@@ -193,7 +172,7 @@ const TaskModal = ({
                   variant="outline"
                   size="sm"
                   onClick={handleEdit}
-                  disabled={isEditing}
+                  disabled={isEditing || loading}
                 >
                   <FontAwesomeIcon icon={faPencil} className="mr-2" />
                   Edit
@@ -202,7 +181,7 @@ const TaskModal = ({
                   variant="destructive"
                   size="sm"
                   onClick={handleDelete}
-                  disabled={isDeleting}
+                  disabled={isDeleting || loading}
                 >
                   <FontAwesomeIcon icon={faTrash} className="mr-2" />
                   {isDeleting ? "Deleting..." : "Delete"}

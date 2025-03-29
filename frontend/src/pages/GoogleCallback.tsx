@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkGoogleAuthStatus } from "../lib/api";
+import Spinner from "../components/Spinner";
 
 const GoogleCallback = () => {
   const [error, setError] = useState("");
@@ -41,7 +42,7 @@ const GoogleCallback = () => {
               Completing Authentication
             </h2>
             <div className="mt-4 flex justify-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+              <Spinner size="sm" />
             </div>
           </div>
         )}

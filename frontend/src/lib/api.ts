@@ -63,8 +63,6 @@ export const createProject = async (data: any) => {
 export const getProjects = async () => {
   try {
     const response = await Api.get("/projects");
-    console.log("the api response");
-    console.log(response);
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to fetch projects");

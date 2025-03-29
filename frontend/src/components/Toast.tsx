@@ -51,51 +51,51 @@ export const Toast: React.FC<ToastProps> = ({
 
   if (!isVisible) return null;
 
-  // Configuration for each toast type
+  // Configuration for each toast type with dark mode support
   const typeConfig = {
     info: {
-      bg: "bg-primary-50",
-      border: "border-l-4 border-primary-500",
+      bg: "bg-primary-50 dark:bg-primary-900/20",
+      border: "border-l-4 border-primary-500 dark:border-primary-400",
       icon: (
         <FontAwesomeIcon
           icon={faInfoCircle}
-          className="text-primary-500 text-lg"
+          className="text-primary-500 dark:text-primary-400 text-lg"
         />
       ),
-      iconBg: "bg-primary-100",
+      iconBg: "bg-primary-100 dark:bg-primary-900/30",
     },
     success: {
-      bg: "bg-success-50",
-      border: "border-l-4 border-success-500",
+      bg: "bg-success-50 dark:bg-success-900/20",
+      border: "border-l-4 border-success-500 dark:border-success-400",
       icon: (
         <FontAwesomeIcon
           icon={faCircleCheck}
-          className="text-success-500 text-lg"
+          className="text-success-500 dark:text-success-400 text-lg"
         />
       ),
-      iconBg: "bg-success-100",
+      iconBg: "bg-success-100 dark:bg-success-900/30",
     },
     warning: {
-      bg: "bg-warning-50",
-      border: "border-l-4 border-warning-500",
+      bg: "bg-warning-50 dark:bg-warning-900/20",
+      border: "border-l-4 border-warning-500 dark:border-warning-400",
       icon: (
         <FontAwesomeIcon
           icon={faWarning}
-          className="text-warning-500 text-lg"
+          className="text-warning-500 dark:text-warning-400 text-lg"
         />
       ),
-      iconBg: "bg-warning-100",
+      iconBg: "bg-warning-100 dark:bg-warning-900/30",
     },
     error: {
-      bg: "bg-danger-50",
-      border: "border-l-4 border-danger-500",
+      bg: "bg-danger-50 dark:bg-danger-900/20",
+      border: "border-l-4 border-danger-500 dark:border-danger-400",
       icon: (
         <FontAwesomeIcon
           icon={faCircleXmark}
-          className="text-danger-500 text-lg"
+          className="text-danger-500 dark:text-danger-400 text-lg"
         />
       ),
-      iconBg: "bg-danger-100",
+      iconBg: "bg-danger-100 dark:bg-danger-900/30",
     },
   };
 
@@ -151,14 +151,18 @@ export const Toast: React.FC<ToastProps> = ({
         )}
         <div className="flex-1 pt-0.5">
           {title && (
-            <div className="font-semibold text-neutral-900 mb-1">{title}</div>
+            <div className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+              {title}
+            </div>
           )}
-          <div className="text-sm text-neutral-700">{message}</div>
+          <div className="text-sm text-neutral-700 dark:text-neutral-300">
+            {message}
+          </div>
         </div>
         {showCloseButton && (
           <button
             type="button"
-            className="ml-4 text-neutral-400 hover:text-neutral-600 focus:outline-none transition-colors duration-200"
+            className="ml-4 text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 focus:outline-none transition-colors duration-200"
             onClick={handleClose}
             aria-label="Close"
           >
@@ -170,9 +174,6 @@ export const Toast: React.FC<ToastProps> = ({
   );
 };
 
-// Toast Container Component
-
-// Toast Context for managing toasts
 interface ToastContextType {
   addToast: (toast: Omit<ToastProps, "onClose">) => string;
   removeToast: (id: string) => void;

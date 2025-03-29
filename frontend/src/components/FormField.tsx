@@ -57,9 +57,21 @@ export const FormField = ({
           />
         );
       case "number":
-        return <input type="number" {...commonProps} min={typeof min === 'number' ? min : undefined} />;
+        return (
+          <input
+            type="number"
+            {...commonProps}
+            min={typeof min === "number" ? min : undefined}
+          />
+        );
       case "date":
-        return <input type="date" {...commonProps} min={typeof min === 'string' ? min : undefined} />;
+        return (
+          <input
+            type="date"
+            {...commonProps}
+            min={typeof min === "string" ? min : undefined}
+          />
+        );
       default:
         return <input type={type} {...commonProps} />;
     }
