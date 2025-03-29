@@ -70,28 +70,19 @@ const TaskListItem = ({
                 }
               >
                 <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium text-gray-900 dark:text-white">
-                      {name}
-                    </h3>
-                    {description && (
-                      <p className="text-sm text-gray-600 dark:text-zinc-400 mt-1">
-                        {description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex space-x-2">
+                  <h3 className="font-medium text-gray-900 dark:text-white">
+                    {name}
+                  </h3>
+
+                  <div className="flex gap-2">
                     <span
-                      className={`px-2.5 py-1 text-xs font-medium rounded-full ${getPriorityColor(
+                      className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
                         priority
                       )}`}
                     >
                       {priority}
                     </span>
-                    <StatusBadge
-                      status={status}
-                      className="scale-75 origin-right"
-                    />
+                    <StatusBadge status={status} className="origin-right" />
                   </div>
                 </div>
                 <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-zinc-400">

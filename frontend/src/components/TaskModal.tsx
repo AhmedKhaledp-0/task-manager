@@ -148,7 +148,7 @@ const TaskModal = ({
                       Priority
                     </h4>
                     <span
-                      className={`px-2.5 py-1 text-xs font-medium rounded-full ${getPriorityColor(
+                      className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
                         currentTask.priority
                       )}`}
                     >
