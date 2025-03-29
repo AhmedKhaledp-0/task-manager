@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+// import { logout } from "../lib/api";
 
 const UserMenu = () => {
   const { data } = useAuth();
@@ -70,14 +71,14 @@ const UserMenu = () => {
             Settings
           </Link>
           <div className="h-px bg-gray-200 dark:bg-zinc-700 my-1" />
-          <Link
-            to="/signout"
+          <button
+            
             className="flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
-            onClick={() => setIsOpen(false)}
+            // onClick={logout}
           >
             <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4 mr-3" />
             Sign out
-          </Link>
+          </button>
         </div>
       </div>
     </div>

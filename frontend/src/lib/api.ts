@@ -20,6 +20,15 @@ export const login = async (data: SignInData) => {
   }
 };
 
+// LogOut functionality
+// export const logout = async() => {
+//   try {
+//     await Api.post("/auth/logout");
+//   } catch (error: any) {
+//     throw new Error(error.message || "Failed to fetch projects");
+//    } 
+// };
+
 export const registerApi = async (data: SignUpData) => {
   try {
     const response = await Api.post("/auth/register", data);
