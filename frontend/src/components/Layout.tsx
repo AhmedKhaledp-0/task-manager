@@ -22,9 +22,9 @@ const Layout = () => {
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="lg:hidden fixed top-4 right-4 z-50 p-3
         flex items-center justify-center
-        bg-white dark:bg-zinc-800 
+        bg-white dark:bg-zinc-800
         shadow-[0_8px_32px_rgba(0,0,0,0.12)]
-        border border-gray-200/50 dark:border-zinc-700/50 
+        border border-gray-200/50 dark:border-zinc-700/50
         rounded-xl
         hover:bg-gray-50 dark:hover:bg-zinc-700
         active:scale-95
@@ -50,6 +50,7 @@ const Layout = () => {
           h-[100dvh] lg:h-[calc(100vh-3rem)]
           my-0 lg:my-6 mx-0 lg:ml-6
           w-[85vw] lg:w-80
+          flex-shrink-0
           bg-white dark:bg-zinc-800 
           border border-gray-200/50 dark:border-zinc-700/50 
           flex flex-col 

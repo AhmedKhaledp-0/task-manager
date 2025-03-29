@@ -20,6 +20,15 @@ export const login = async (data: SignInData) => {
   }
 };
 
+// LogOut functionality
+export const logout = async() => {
+  try {
+    await Api.delete("/auth/logout", { withCredentials: true });
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to log out");
+   } 
+};
+
 export const registerApi = async (data: SignUpData) => {
   try {
     const response = await Api.post("/auth/register", data);
