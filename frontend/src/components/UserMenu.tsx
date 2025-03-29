@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
@@ -13,11 +13,13 @@ const UserMenu = () => {
   // @ts-ignore - We know response has a user property
 
   const { firstName, lastName, email } = data?.user || {};
-
+  const navigate = useNavigate();
   const { mutate: handleLogout, isPending, isError, error } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      window.location.href = "/signin";
+      // Clear user data and redirect to login page
+      setIsOpen(false);
+      navigate("/login", { replace: true });
     },
     onError: (error: Error) => {
       console.error("Logout failed:", error.message);
@@ -85,7 +87,7 @@ const UserMenu = () => {
           <div className="h-px bg-gray-200 dark:bg-zinc-700 my-1" />
           <button
             
-            className="flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+            className="flex grow items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
             onClick={() => handleLogout()}
             disabled={isPending} // Disable button while logging out
           >

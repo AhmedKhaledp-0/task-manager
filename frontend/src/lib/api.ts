@@ -23,7 +23,7 @@ export const login = async (data: SignInData) => {
 // LogOut functionality
 export const logout = async() => {
   try {
-    await Api.delete("/auth/logout", { withCredentials: true });
+    await Api.delete("/auth/logout");
   } catch (error: any) {
     throw new Error(error.message || "Failed to log out");
    } 
