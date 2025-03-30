@@ -13,7 +13,7 @@ export const getPriorityColor = (priority: string) => {
 
 export const getStatusColor = (status: string) => {
   switch (status) {
-    case "complete":
+    case "completed":
       return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
     case "active":
       return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";

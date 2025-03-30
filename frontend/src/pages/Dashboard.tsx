@@ -45,7 +45,7 @@ const Dashboard = () => {
 
   const getProjectStats = () => {
     const totalProjects = projects.length;
-    const completed = projects.filter((p) => p.status === "complete").length;
+    const completed = projects.filter((p) => p.status === "completed").length;
     const active = projects.filter((p) => p.status === "active").length;
     const highPriority = projects.filter((p) => p.priority === "high").length;
 

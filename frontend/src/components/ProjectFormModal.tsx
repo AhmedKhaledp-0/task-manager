@@ -131,7 +131,7 @@ const ProjectFormModal = ({
                   type="select"
                   options={[
                     { value: "active", label: "Active" },
-                    { value: "complete", label: "Complete" },
+                    { value: "completed", label: "Completed" },
                   ]}
                   required
                 />

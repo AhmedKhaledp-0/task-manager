@@ -87,7 +87,7 @@ const ProjectDetails = () => {
         ...project,
         name: data.name,
         description: data.description,
-        status: data.status as "active" | "complete",
+        status: data.status as "active" | "completed",
         priority: data.priority as "low" | "moderate" | "high",
         deadline: data.deadline.toString(),
       });

@@ -60,7 +60,7 @@ export interface ProjectData {
   _id: string;
   name: string;
   description?: string;
-  status: "active" | "complete";
+  status: "active" | "completed";
   priority: "low" | "moderate" | "high";
   deadline: string;
   tasks?: Task[];
