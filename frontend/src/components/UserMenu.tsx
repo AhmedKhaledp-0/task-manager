@@ -19,7 +19,7 @@ const UserMenu = () => {
     onSuccess: () => {
       // Clear user data and redirect to login page
       setIsOpen(false);
-      navigate("/signin", { replace: true });
+      navigate("/login", { replace: true });
     },
     onError: (error: Error) => {
       console.error("Logout failed:", error.message);
