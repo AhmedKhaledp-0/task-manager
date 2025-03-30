@@ -9,6 +9,7 @@ import {
   faTasks,
   faBars,
   faXmark,
+  faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
@@ -85,6 +86,14 @@ const Layout = () => {
               >
                 <FontAwesomeIcon icon={faTasks} className="w-5 h-5 mr-4" />
                 Tasks
+              </Link>
+              <Link
+                to="/reports"
+                className="flex items-center px-5 py-4 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <FontAwesomeIcon icon={faFileAlt} className="w-5 h-5 mr-4" />
+                Reports
               </Link>
             </div>
           </div>

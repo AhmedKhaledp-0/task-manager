@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ProjectDetails from "./pages/ProjectDetails";
 import Profile from "./components/Profile";
 import Projects from "./components/Projects";
+import Reports from "./pages/Reports";
 import Tasks from "./pages/Tasks";
 import Error from "./pages/Error";
 import GoogleCallback from "./pages/GoogleCallback";
@@ -31,6 +32,8 @@ function App() {
             <Route path="/projects" element={<Projects />} />
             <Route path="/project/:id" element={<ProjectDetails />} />
             <Route path="/tasks" element={<Tasks />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/reports/:id" element={<Reports />} />
           </Route>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
