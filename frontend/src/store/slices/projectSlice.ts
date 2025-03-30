@@ -30,6 +30,7 @@ export const fetchProjects = createAsyncThunk(
       const response = await getProjects();
       return response.data;
     } catch (error: any) {
+      console.error("Error fetching projects:", error);
       return rejectWithValue(error.message || "Failed to load projects");
     }
   }
@@ -107,6 +108,7 @@ const projectsSlice = createSlice({
       .addCase(
         fetchProjects.fulfilled,
         (state, action: PayloadAction<ProjectData[]>) => {
+          console.log("Fetched projects:", action.payload);
           state.loading = false;
           state.projects = action.payload;
         }
@@ -124,6 +126,7 @@ const projectsSlice = createSlice({
       .addCase(
         fetchProjectById.fulfilled,
         (state, action: PayloadAction<ProjectData>) => {
+          console.log("Fetched projects:", JSON.stringify(action.payload, null, 2));
           state.loading = false;
           state.currentProject = action.payload;
         }
