@@ -5,12 +5,13 @@ import TaskForm from "../components/TaskForm";
 import TaskListItem from "../components/TaskListItem";
 import Spinner from "../components/Spinner";
 import Button from "../components/Button";
+import ProjectDropdown from "../components/ProjectDropdown";
 
 const Tasks = () => {
   const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { projects, loading, error } = useAppSelector((state) => state.projects);
-  const { currentProject } = useAppSelector((state) => state.projects); // Get the selected project
+  const { currentProject } = useAppSelector((state) => state.projects);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,12 +30,7 @@ const Tasks = () => {
         <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
           Tasks
         </h1>
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          className=""
-        >
-          + Add Task
-        </Button>
+        <Button onClick={() => setIsModalOpen(true)}>+ Add Task</Button>
       </div>
 
       {isModalOpen && (
@@ -43,18 +39,16 @@ const Tasks = () => {
             <div className="mb-4">
               <h2 className="font-bold text-2xl">Create New Task</h2>
               <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-red-500 text-xl"
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-red-500 text-xl"
               >
                 ✕
               </button>
             </div>
-            
             <TaskForm />
           </div>
         </div>
       )}
-
 
       {loading ? (
         <div className="flex justify-center py-8">
@@ -64,26 +58,13 @@ const Tasks = () => {
         <p className="text-red-500 text-center">{error}</p>
       ) : (
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Select a Project
-          </h2>
-          <select
-            className="p-2 border border-gray-500 rounded-md text-black dark:text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-gray-400 transition"
-            onChange={(e) => setSelectedProjectId(e.target.value)}
-          >
-            <option value="" className="text-gray-700 dark:text-gray-300 dark:bg-gray-800">
-              Select a Project
-            </option>
-            {projects.map((project) => (
-              <option key={project._id} value={project._id} className="bg-white dark:bg-gray-800">
-                {project.name}
-              </option>
-            ))}
-          </select>
-
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Select a Project</h2>
+            <ProjectDropdown projects={projects} setSelectedProjectId={setSelectedProjectId} />
+          </div>
 
           {selectedProjectId && currentProject && (
-            <div className="border-b pb-4">
+            <div className="pb-4">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {currentProject.name}
               </h2>
