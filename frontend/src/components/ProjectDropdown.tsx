@@ -1,6 +1,15 @@
 import { useState } from "react";
+import { ProjectData } from "../types/Types";
 
-const ProjectDropdown = ({ projects, setSelectedProjectId }) => {
+interface ProjectDropdownProps {
+  projects: ProjectData[];
+  setSelectedProjectId: (id: string) => void;
+}
+
+const ProjectDropdown = ({
+  projects,
+  setSelectedProjectId,
+}: ProjectDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
