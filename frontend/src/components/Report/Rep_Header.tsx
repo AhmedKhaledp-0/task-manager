@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store";
 import { fetchProjects, fetchProjectById } from "../../store/slices/projectSlice";
 import { ProjectData } from "../../types/Types";
 
-import { getProjectStats, getTaskStats, getUpcomingDeadlines } from "../ProjectTaskStates";
+import { getProjectStats, getTaskStats } from "../ProjectTaskStates";
 
 interface ReportHeaderProps {
   className?: string;
@@ -75,7 +75,7 @@ export function ReportHeader({ className }: ReportHeaderProps) {
         </div>
         <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
           <FontAwesomeIcon icon={faCheckSquare} className="h-4 w-4" />
-          <span>{taskStats.inProgressTasks} Active Tasks</span>
+          <span>{taskStats.inProgress} Active Tasks</span>
         </div>
         <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
           <FontAwesomeIcon icon={faBriefcase} className="h-4 w-4" />

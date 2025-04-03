@@ -170,7 +170,7 @@ const ProjectDetails = () => {
   }
 
   return (
-    <div className="p-6">
+    <>
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <Button variant="ghost" onClick={() => navigate(-1)}>
@@ -259,7 +259,7 @@ const ProjectDetails = () => {
           onTaskCreated={handleTaskCreated}
         />
       )}
-    </div>
+    </>
   );
 };
 
