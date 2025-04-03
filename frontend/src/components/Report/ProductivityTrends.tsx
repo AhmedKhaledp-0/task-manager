@@ -19,22 +19,22 @@ const ProductivityTrends = () => {
       {
         label: "Completed Tasks",
         data: formatMonthlyStats(taskStats.completed), // Convert count to monthly format
-        backgroundColor: "rgba(100, 100, 255, 0.2)",
-        borderColor: "rgba(100, 100, 255, 1)",
+        backgroundColor: "#1b9b48",
+        borderColor: "#4ADE80",
         fill: true,
       },
       {
         label: "In Progress Tasks",
         data: formatMonthlyStats(taskStats.inProgress),
-        backgroundColor: "rgba(50, 200, 100, 0.2)",
-        borderColor: "rgba(50, 200, 100, 1)",
+        backgroundColor: "#1a5fb2",
+        borderColor: "#5C9EF4",
         fill: true,
       },
       {
         label: "TO DO Tasks",
         data: formatMonthlyStats(taskStats.todo),
-        backgroundColor: "rgba(50, 62, 200, 0.2)",
-        borderColor: "rgb(50, 75, 200)",
+        backgroundColor: "#c9a112",
+        borderColor: "#F4C715",
         fill: true,
       },
     ],

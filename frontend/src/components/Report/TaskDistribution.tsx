@@ -20,13 +20,13 @@ const TaskDistribution = () => {
           taskStats.todo,
           taskStats.highPriority,
         ],
-        backgroundColor: ["#4CAF50", "#2196F3", "#BDBDBD", "#F44336"],
+        backgroundColor: ["#4ADE80", "#5C9EF4", "#F4C715", "#F87171"],
       },
     ],
   };
 
   return (
-    <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow">
+    <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow w-full">
       <h2 className="text-lg font-semibold mb-2">Task Distribution</h2>
       <Pie data={data} />
     </div>
