@@ -29,7 +29,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
-            <Route index path="/dashboard" element={<Dashboard />} />
+            <Route index element={<Dashboard />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/project/:id" element={<ProjectDetails />} />
             <Route path="/tasks" element={<Tasks />} />

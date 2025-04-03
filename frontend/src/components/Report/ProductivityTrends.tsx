@@ -15,14 +15,14 @@ const ProductivityTrends = () => {
     datasets: [
       {
         label: "Completed Tasks",
-        data: taskStats.completedTasks, // Now structured as an array per month
+        data: taskStats.completed, // Now structured as an array per month
         backgroundColor: "rgba(100, 100, 255, 0.2)",
         borderColor: "rgba(100, 100, 255, 1)",
         fill: true,
       },
       {
         label: "In Progress Tasks",
-        data: taskStats.inProgressTasks, // Now structured as an array per month
+        data: taskStats.inProgress, // Now structured as an array per month
         backgroundColor: "rgba(50, 200, 100, 0.2)",
         borderColor: "rgba(50, 200, 100, 1)",
         fill: true,

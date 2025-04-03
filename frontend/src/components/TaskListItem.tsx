@@ -69,12 +69,12 @@ const TaskListItem = ({
                   } as Task)
                 }
               >
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col md:flex-row gap-2 justify-between items-start">
                   <h3 className="font-medium text-gray-900 dark:text-white">
                     {name}
                   </h3>
 
-                  <div className="flex gap-2">
+                  <div className="flex self-end gap-2">
                     <span
                       className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
                         priority

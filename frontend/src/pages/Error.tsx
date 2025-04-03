@@ -49,7 +49,7 @@ const Error = () => {
             variant="secondary"
             size="lg"
             className="w-full"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
           >
             Return to Dashboard
           </Button>

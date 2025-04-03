@@ -1,10 +1,8 @@
 import { useAppSelector } from "../../store/store";
 import { selectAllProjects } from "../../store/selectors";
-import { getTaskStats } from "../ProjectTaskStates";
 
 const ProjectProgress = () => {
   const projects = useAppSelector(selectAllProjects);
-  const taskStats = getTaskStats(projects);
 
   console.log("Projects:", projects); // Check what projects contain
 

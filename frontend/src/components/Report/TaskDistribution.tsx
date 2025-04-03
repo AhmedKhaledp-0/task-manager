@@ -15,10 +15,10 @@ const TaskDistribution = () => {
     datasets: [
       {
         data: [
-          taskStats.completedTasks,
-          taskStats.inProgressTasks,
-          taskStats.todoTasks,
-          taskStats.highPriorityTasks,
+          taskStats.completed,
+          taskStats.inProgress,
+          taskStats.todo,
+          taskStats.highPriority,
         ],
         backgroundColor: ["#4CAF50", "#2196F3", "#BDBDBD", "#F44336"],
       },

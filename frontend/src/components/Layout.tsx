@@ -64,7 +64,7 @@ const Layout = () => {
           <div className="p-6 flex-grow overflow-y-auto rounded-t-2xl">
             <div className="space-y-2">
               <Link
-                to="/dashboard"
+                to="/"
                 className="flex items-center px-5 py-4 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

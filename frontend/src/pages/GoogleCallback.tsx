@@ -11,7 +11,7 @@ const GoogleCallback = () => {
     const verifyGoogleAuth = async () => {
       try {
         await checkGoogleAuthStatus();
-        navigate("/dashboard", { replace: true });
+        navigate("/", { replace: true });
       } catch (error: any) {
         setError(error.message || "Authentication failed");
         // Redirect to login page after a delay

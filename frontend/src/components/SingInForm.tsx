@@ -29,7 +29,7 @@ const SignInForm = () => {
   } = useMutation({
     mutationFn: (data: SignInData) => login(data),
     onSuccess: () => {
-      navigate("/dashboard", {
+      navigate("/", {
         replace: true,
       });
     },
