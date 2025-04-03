@@ -10,25 +10,29 @@ const ProductivityTrends = () => {
   const projects = useAppSelector(selectAllProjects);
   const taskStats = getTaskStats(projects);
 
+  // Convert taskStats into an array of 12 months (defaulting to 0)
+  const formatMonthlyStats = (tasksCount: number) => Array(12).fill(0).map((_, i) => (i < new Date().getMonth() + 1 ? tasksCount : 0));
+
   const data = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [
       {
         label: "Completed Tasks",
-        data: taskStats.completed, // Now structured as an array per month
+        data: formatMonthlyStats(taskStats.completed), // Convert count to monthly format
         backgroundColor: "rgba(100, 100, 255, 0.2)",
         borderColor: "rgba(100, 100, 255, 1)",
         fill: true,
       },
       {
         label: "In Progress Tasks",
-        data: taskStats.inProgress, // Now structured as an array per month
+        data: formatMonthlyStats(taskStats.inProgress),
         backgroundColor: "rgba(50, 200, 100, 0.2)",
         borderColor: "rgba(50, 200, 100, 1)",
         fill: true,
       },
     ],
   };
+
 
   return (
     <div className="bg-white dark:bg-zinc-800 text-gray-700 dark:text-gray-300 p-4 rounded-lg shadow">
