@@ -22,6 +22,7 @@ const ThemeToggle = () => {
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
       className="p-1.5 rounded-lg bg-gray-100 dark:bg-zinc-700 aspect-square  hover:bg-gray-200 dark:hover:bg-zinc-600 transition-all duration-200 w-10 h-10 flex justify-center items-center focus:outline-none"
       aria-label={`Switch to ${
