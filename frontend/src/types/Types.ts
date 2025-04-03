@@ -27,6 +27,10 @@ export type SignUpFormData = {
   password: string;
 };
 
+export type ForgetPasswordData = {
+  email: string;
+};
+
 export type ProjectFormData = {
   name: string;
   deadline: Date | string;
@@ -90,6 +94,10 @@ export const SignUpSchema: ZodType<SignUpFormData> = z.object({
   lastName: z.string().nonempty("Last name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export const forgetPasswordSchema: ZodType<ForgetPasswordData> = z.object({
+  email: z.string().email("Invalid email address"),
 });
 
 export const SignInSchema: ZodType<SignInFormData> = z.object({

@@ -13,6 +13,7 @@ import GoogleCallback from "./pages/GoogleCallback";
 import { useAppSelector } from "./store/store";
 import { selectEffectiveTheme } from "./store/slices/themeSlice";
 import { useEffect } from "react";
+import ForgetPassword from "./pages/ForgetPassword";
 
 function App() {
   const effectiveTheme = useAppSelector(selectEffectiveTheme);
@@ -37,6 +38,7 @@ function App() {
           </Route>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="forgot-password" element={<ForgetPassword />} />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="*" element={<Error />} />
         </Routes>

@@ -1,4 +1,5 @@
 import Api from "../config/apiClient";
+import { ForgetPasswordData } from "../types/Types";
 
 export interface SignUpData {
   firstName: string;
@@ -35,6 +36,16 @@ export const registerApi = async (data: SignUpData) => {
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to register");
+  }
+};
+
+// Forget Password API
+export const forgetPassword = async (data: ForgetPasswordData) => {
+  try {
+    const response = await Api.post("/auth/forgetpassword", data);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to send the Email");
   }
 };
 
