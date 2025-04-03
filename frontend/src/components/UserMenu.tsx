@@ -10,7 +10,7 @@ const UserMenu = () => {
   const { data } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  // @ts-ignore - We know response has a user property
+  // @ts-expect-error - We know response has a user property
 
   const { firstName, lastName, email } = data?.user || {};
   const navigate = useNavigate();
