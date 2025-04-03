@@ -40,13 +40,39 @@ export default defineConfig({
         theme_color: "#ffffff",
         background_color: "#ffffff",
         display: "standalone",
-        start_url: "/",
+        start_url: "https://task-managerdepi.vercel.app",
         dir: "ltr",
         scope: "/",
         display_override: ["standalone", "window-controls-overlay"],
         lang: "en",
         orientation: "natural",
         categories: ["productivity"],
+        shortcuts: [
+          {
+            name: "Dashboard",
+            short_name: "Dashboard",
+            url: "/",
+            description: "View your dashboard",
+          },
+          {
+            name: "Projects",
+            short_name: "Projects",
+            url: "/projects",
+            description: "View your projects",
+          },
+          {
+            name: "Tasks",
+            short_name: "Tasks",
+            url: "/tasks",
+            description: "View your tasks",
+          },
+          {
+            name: "Reports",
+            short_name: "Reports",
+            url: "/reports",
+            description: "View your reports",
+          },
+        ],
         screenshots: [
           {
             src: "/screenshots/screen-1-1440x900.png",
