@@ -6,13 +6,19 @@ import TaskListItem from "../components/TaskListItem";
 import Spinner from "../components/Spinner";
 import Button from "../components/Button";
 import ProjectDropdown from "../components/ProjectDropdown";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const Tasks = () => {
   const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { projects, loading, error } = useAppSelector((state) => state.projects);
+  const { projects, loading, error } = useAppSelector(
+    (state) => state.projects
+  );
   const { currentProject } = useAppSelector((state) => state.projects);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     dispatch(fetchProjects()); // Fetch all projects
@@ -25,12 +31,15 @@ const Tasks = () => {
   }, [dispatch, selectedProjectId]);
 
   return (
-    <div>
-      <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+    <div className="max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Tasks
         </h1>
-        <Button onClick={() => setIsModalOpen(true)}>+ Add Task</Button>
+        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+          <FontAwesomeIcon icon={faPlus} className="mr-2" />
+          Add Task
+        </Button>
       </div>
 
       {isModalOpen && (
@@ -59,8 +68,13 @@ const Tasks = () => {
       ) : (
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Select a Project</h2>
-            <ProjectDropdown projects={projects} setSelectedProjectId={setSelectedProjectId} />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Select a Project
+            </h2>
+            <ProjectDropdown
+              projects={projects}
+              setSelectedProjectId={setSelectedProjectId}
+            />
           </div>
 
           {selectedProjectId && currentProject && (

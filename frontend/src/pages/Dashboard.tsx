@@ -117,7 +117,7 @@ const Dashboard = () => {
   const upcomingDeadlines = getUpcomingDeadlines();
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto">
       {/* Header with Add Project button */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100">
