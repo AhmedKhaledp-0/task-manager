@@ -30,6 +30,13 @@ const ProductivityTrends = () => {
         borderColor: "rgba(50, 200, 100, 1)",
         fill: true,
       },
+      {
+        label: "TO DO Tasks",
+        data: formatMonthlyStats(taskStats.todo),
+        backgroundColor: "rgba(50, 62, 200, 0.2)",
+        borderColor: "rgb(50, 75, 200)",
+        fill: true,
+      },
     ],
   };
 
