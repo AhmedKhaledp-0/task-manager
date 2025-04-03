@@ -106,7 +106,7 @@ const SignUpForm = () => {
         <GoogleButton className="w-full" />
         <Link
           to="/signin"
-          className="!bg-transparent font-medium text-sm self-center mt-2 hover:text-indigo-500 text-indigo-500 dark:hover:text-indigo-300"
+          className="!bg-transparent font-medium text-sm self-center mt-2 text-indigo-500 dark:hover:text-indigo-300"
         >
           Already have an account?
           <span className="text-gray-500 dark:text-gray-300"> Sign in </span>
