@@ -14,7 +14,12 @@ const UserMenu = () => {
 
   const { firstName, lastName, email } = data?.user || {};
   const navigate = useNavigate();
-  const { mutate: handleLogout, isPending, isError, error } = useMutation({
+  const {
+    mutate: handleLogout,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
       // Clear user data and redirect to login page
@@ -25,7 +30,6 @@ const UserMenu = () => {
       console.error("Logout failed:", error.message);
     },
   });
-  
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -67,7 +71,7 @@ const UserMenu = () => {
             : "opacity-0 -translate-y-2 pointer-events-none"
         }`}
       >
-        <div className="py-1">
+        <div className="flex flex-col">
           <Link
             to="/profile"
             className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors duration-200"
@@ -84,10 +88,8 @@ const UserMenu = () => {
             <FontAwesomeIcon icon={faCog} className="w-4 h-4 mr-3" />
             Settings
           </Link>
-          <div className="h-px bg-gray-200 dark:bg-zinc-700 my-1" />
           <button
-            
-            className="flex grow items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+            className="flex flex-grow items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
             onClick={() => handleLogout()}
             disabled={isPending} // Disable button while logging out
           >
