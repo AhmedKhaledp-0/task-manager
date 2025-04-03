@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpSchema, SignUpFormData } from "../types/Types";
 import ThemeToggle from "./ThemeToggle";
+import { Link } from "react-router-dom";
 
 const SignUpForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -103,14 +104,13 @@ const SignUpForm = () => {
         </Button>
 
         <GoogleButton className="w-full" />
-
-        <Button
-          onClick={() => navigate("/signin")}
+        <Link
+          to="/signin"
           className="!bg-transparent font-medium text-sm self-center mt-2 hover:text-indigo-500 text-indigo-500 dark:hover:text-indigo-300"
         >
           Already have an account?
           <span className="text-gray-500 dark:text-gray-300"> Sign in </span>
-        </Button>
+        </Link>
       </form>
     </>
   );

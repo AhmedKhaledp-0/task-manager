@@ -91,13 +91,13 @@ const SignInForm = () => {
 
         <GoogleButton className="w-full" />
 
-        <Button
-          onClick={() => navigate("/signup")}
-          className="!bg-transparent font-medium text-sm self-center mt-2  hover:text-indigo-500 text-indigo-500 dark:hover:text-indigo-300"
-        >
-          Don't have an account?
-          <span className=" text-gray-500 dark:text-gray-300"> Sign up </span>
-        </Button>
+        <Link
+            to="/signup"
+            className="!bg-transparent font-medium text-sm self-center mt-2 hover:text-indigo-500 text-indigo-500 dark:hover:text-indigo-300"
+          >
+            Don't have an account?
+            <span className="text-gray-500 dark:text-gray-300"> Sign up </span>
+        </Link>
       </form>
     </>
   );
