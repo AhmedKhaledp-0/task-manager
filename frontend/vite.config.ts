@@ -41,34 +41,33 @@ export default defineConfig({
         background_color: "#ffffff",
         display: "standalone",
         start_url: "/",
+        lang: "en",
+        orientation: "natural",
+        categories: ["productivity", "task management", "project management"],
         screenshots: [
           {
             src: "screenshots/screen-1-1440x900.png",
             sizes: "1440x900",
             type: "image/png",
             label: "ToTasky Dark View",
-            form_factor: "wide",
           },
           {
             src: "screenshots/screen-2-1440x900.png",
             sizes: "1440x900",
             type: "image/png",
             label: "ToTasky Light View",
-            form_factor: "wide",
           },
           {
             src: "screenshots/screen-3-1440x900.png",
             sizes: "1440x900",
             type: "image/png",
             label: "ToTasky Project Details View",
-            form_factor: "wide",
           },
           {
             src: "screenshots/screen-4-1440x900.png",
             sizes: "1440x900",
             type: "image/png",
             label: "ToTasky Report View",
-            form_factor: "wide",
           },
           {
             src: "screenshots/screen-1-414x896.png",
