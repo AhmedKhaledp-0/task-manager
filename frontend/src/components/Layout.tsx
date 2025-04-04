@@ -1,20 +1,18 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import UserMenu from "./UserMenu";
 import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHome,
-  faLayerGroup,
-  faTasks,
-  faBars,
-  faXmark,
-  faFileAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import { navigationItems } from "../utils/list";
 
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col overflow-hidden bg-white dark:bg-zinc-900">
@@ -63,38 +61,16 @@ const Layout = () => {
         >
           <div className="p-6 flex-grow overflow-y-auto rounded-t-2xl">
             <div className="space-y-2">
-              <Link
-                to="/"
-                className="flex items-center px-5 py-4 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <FontAwesomeIcon icon={faHome} className="w-5 h-5 mr-4" />
-                Dashboard
-              </Link>
-              <Link
-                to="/projects"
-                className="flex items-center px-5 py-4 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <FontAwesomeIcon icon={faLayerGroup} className="w-5 h-5 mr-4" />
-                Projects
-              </Link>
-              <Link
-                to="/tasks"
-                className="flex items-center px-5 py-4 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <FontAwesomeIcon icon={faTasks} className="w-5 h-5 mr-4" />
-                Tasks
-              </Link>
-              <Link
-                to="/reports"
-                className="flex items-center px-5 py-4 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <FontAwesomeIcon icon={faFileAlt} className="w-5 h-5 mr-4" />
-                Reports
-              </Link>
+              {navigationItems.map(({ path, icon, label }) => (
+                <Link
+                  key={path}
+                  to={path}
+                  className="flex items-center px-5 py-4 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl transition-colors duration-200"
+                >
+                  <FontAwesomeIcon icon={icon} className="w-5 h-5 mr-4" />
+                  {label}
+                </Link>
+              ))}
             </div>
           </div>
 

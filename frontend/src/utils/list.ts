@@ -3,6 +3,10 @@ import {
   faCheckCircle,
   faSpinner,
   faClock,
+  faHome,
+  faLayerGroup,
+  faTasks,
+  faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const statsCardsList = [
@@ -30,4 +34,10 @@ export const statsCardsList = [
     icon: faClock,
     color: "red",
   },
+];
+export const navigationItems = [
+  { path: "/", label: "Dashboard", icon: faHome },
+  { path: "/projects", label: "Projects", icon: faLayerGroup },
+  { path: "/tasks", label: "Tasks", icon: faTasks },
+  { path: "/reports", label: "Reports", icon: faFileAlt },
 ];
