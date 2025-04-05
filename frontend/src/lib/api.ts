@@ -101,7 +101,7 @@ export const getProjectById = async (id: string) => {
 
 export const updateProject = async (id: string, newData: any) => {
   try {
-    const response = await Api.put(`/projects/${id}`,  newData );
+    const response = await Api.put(`/projects/${id}`, newData);
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to update project");

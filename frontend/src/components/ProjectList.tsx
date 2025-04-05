@@ -1,26 +1,24 @@
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../store/store";
-import {
-  selectAllProjects,
-  selectProjectsError,
-  selectProjectsLoading,
-} from "../store/selectors";
 import Spinner from "./Spinner";
 import { formatDate, getPriorityColor, getStatusColor } from "../utils/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { ProjectData } from "../types/Types";
 
-const ProjectList = () => {
+interface pr {
+  projects: ProjectData[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+const ProjectList = ({ projects, isLoading, error }: pr) => {
   const navigate = useNavigate();
-  const projects = useAppSelector(selectAllProjects);
-  const loading = useAppSelector(selectProjectsLoading);
-  const error = useAppSelector(selectProjectsError);
 
   const handleProjectClick = (id: string) => {
     navigate(`/project/${id}`);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
         <Spinner />

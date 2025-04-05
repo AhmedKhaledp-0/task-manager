@@ -1,48 +1,35 @@
-import { useEffect } from "react";
+import { Data } from "../types/Types";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faPlus } from "@fortawesome/free-solid-svg-icons";
-import {
-  selectAllProjects,
-  selectProjectsError,
-  selectProjectsLoading,
-} from "../store/selectors";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchProjects, fetchProjectById } from "../store/slices/projectSlice";
+
 import Button from "../components/Button";
 import { statsCardsList } from "../utils/list";
 import Spinner from "../components/Spinner";
 import { formatDate } from "../utils/utils";
-import { ProjectData } from "../types/Types";
+import { useProjects } from "../hooks/useApi";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const projects = useAppSelector(selectAllProjects);
-  const loading = useAppSelector(selectProjectsLoading);
-  const error = useAppSelector(selectProjectsError);
+  const {
+    data: projectsData,
+    isLoading,
+    error,
+  } = useProjects({
+    select: (data: Data) => {
+      return data?.data?.projects || [];
+    },
+  });
 
-  useEffect(() => {
-    const fetchProjectsWithTasks = async () => {
-      try {
-        const response = await dispatch(fetchProjects()).unwrap();
-        const projectsWithTasks = await Promise.all(
-          response.map(async (project: ProjectData) => {
-            const projectDetails = await dispatch(
-              fetchProjectById(project._id)
-            ).unwrap();
-            return projectDetails;
-          })
-        );
-        dispatch(fetchProjects.fulfilled(projectsWithTasks, ""));
-      } catch (error) {
-        console.error("Error fetching projects with tasks:", error);
-      }
-    };
-
-    fetchProjectsWithTasks();
-  }, [dispatch]);
-
+  const projects: Array<{
+    status: string;
+    priority: string;
+    tasks?: any[];
+    deadline: string;
+    _id: string;
+    name: string;
+    description?: string;
+  }> = Array.isArray(projectsData) ? projectsData : [];
   const getProjectStats = () => {
     const totalProjects = projects.length;
     const completed = projects.filter((p) => p.status === "completed").length;
@@ -52,28 +39,28 @@ const Dashboard = () => {
     return { totalProjects, completed, active, highPriority };
   };
 
-  const getTaskStats = () => {
-    const allTasks = projects.flatMap((p) => p.tasks || []);
-    const totalTasks = allTasks.length;
-    const completedTasks = allTasks.filter(
-      (t) => t.status === "completed"
-    ).length;
-    const inProgressTasks = allTasks.filter(
-      (t) => t.status === "in-progress"
-    ).length;
-    const todoTasks = allTasks.filter((t) => t.status === "todo").length;
-    const highPriorityTasks = allTasks.filter(
-      (t) => t.priority === "high"
-    ).length;
+  // const getTaskStats = () => {
+  //   const allTasks = projects.flatMap((p) => p.tasks || []);
+  //   const totalTasks = allTasks.length;
+  //   const completedTasks = allTasks.filter(
+  //     (t) => t.status === "completed"
+  //   ).length;
+  //   const inProgressTasks = allTasks.filter(
+  //     (t) => t.status === "in-progress"
+  //   ).length;
+  //   const todoTasks = allTasks.filter((t) => t.status === "todo").length;
+  //   const highPriorityTasks = allTasks.filter(
+  //     (t) => t.priority === "high"
+  //   ).length;
 
-    return {
-      totalTasks,
-      completedTasks,
-      inProgressTasks,
-      todoTasks,
-      highPriorityTasks,
-    };
-  };
+  //   return {
+  //     totalTasks,
+  //     completedTasks,
+  //     inProgressTasks,
+  //     todoTasks,
+  //     highPriorityTasks,
+  //   };
+  // };
 
   const getUpcomingDeadlines = () => {
     const now = new Date();
@@ -96,7 +83,7 @@ const Dashboard = () => {
       .slice(0, 3);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
         <Spinner />
@@ -107,20 +94,20 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
-        {error}
+        {error.message}
       </div>
     );
   }
 
   const stats = getProjectStats();
-  const taskStats = getTaskStats();
+  // const taskStats = getTaskStats();
   const upcomingDeadlines = getUpcomingDeadlines();
 
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header with Add Project button */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
           Dashboard
         </h1>
         <Button variant="primary" onClick={() => navigate("/projects")}>
@@ -162,7 +149,7 @@ const Dashboard = () => {
       </div>
 
       {/* Task Insights */}
-      <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 mb-8">
+      {/* <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 mb-8">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-zinc-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             Task Insights
@@ -219,7 +206,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-8">
         <div className="xl:col-span-1">
@@ -284,7 +271,7 @@ const Dashboard = () => {
                       )}
                       <div className="flex justify-between items-center text-sm">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium 
+                          className={`px-2 py-1 rounded-full text-xs font-medium
                           ${
                             project.priority === "high"
                               ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"

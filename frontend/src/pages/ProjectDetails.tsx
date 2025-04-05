@@ -1,125 +1,48 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProjectData, ProjectFormData, Task } from "../types/Types";
-import { deleteProject, getProjectById, updateProject } from "../lib/api";
+import { ProjectFormData, Task } from "../types/Types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setSelectedTask } from "../store/slices/taskSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../components/Button";
-import { useToast } from "../components/Toast";
 import ProjectFormModal from "../components/ProjectFormModal";
 import TaskModal from "../components/TaskModal";
 import CreateTaskModal from "../components/CreateTaskModal";
 import TaskListItem from "../components/TaskListItem";
 import Spinner from "../components/Spinner";
 import ProjectHeader from "../components/project/ProjectHeader";
+import {
+  useUpdateProject,
+  useDeleteProject,
+  useProject,
+} from "../hooks/useApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { addToast } = useToast();
-  const [project, setProject] = useState<ProjectData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [tasksLoading, setTasksLoading] = useState(false);
-  const [error, setError] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
   const selectedTask = useAppSelector((state) => state.tasks.selectedTask);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      if (!id) return;
+  const { data: project, isLoading, error } = useProject(id);
+  const deleteProjectMutation = useDeleteProject();
 
-      try {
-        setLoading(true);
-        const response = await getProjectById(id);
-        setProject(response.data);
-        setError("");
-      } catch (err: any) {
-        setError(err.message || "Failed to load project details");
-        addToast({
-          type: "error",
-          title: "Error",
-          message: err.message || "Failed to load project details",
-          duration: 5000,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  const updateProjectMutation = useUpdateProject();
 
-    fetchProject();
-  }, [id]);
-
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!id || !window.confirm("Are you sure you want to delete this project?"))
       return;
-
-    try {
-      await deleteProject(id);
-      addToast({
-        type: "success",
-        title: "Success",
-        message: "Project deleted successfully",
-        duration: 3000,
-      });
-      navigate("/projects");
-    } catch (err: any) {
-      setError(err.message || "Failed to delete project");
-      addToast({
-        type: "error",
-        title: "Error",
-        message: err.message || "Failed to delete project",
-        duration: 5000,
-      });
-    }
+    deleteProjectMutation.mutate(id);
   };
 
-  const handleEdit = async (data: ProjectFormData) => {
-    if (!id || !project) return;
-
-    try {
-      await updateProject(id, data);
-      setProject({
-        ...project,
-        name: data.name,
-        description: data.description,
-        status: data.status as "active" | "completed",
-        priority: data.priority as "low" | "moderate" | "high",
-        deadline: data.deadline.toString(),
-      });
-      setIsEditModalOpen(false);
-      addToast({
-        type: "success",
-        title: "Success",
-        message: "Project updated successfully",
-        duration: 3000,
-      });
-    } catch (err: any) {
-      addToast({
-        type: "error",
-        title: "Error",
-        message: err.message || "Failed to update project",
-        duration: 5000,
-      });
-    }
-  };
-
-  const refreshProject = async () => {
+  const handleEdit = (data: ProjectFormData) => {
     if (!id) return;
-
-    try {
-      setTasksLoading(true);
-      const response = await getProjectById(id);
-      setProject(response.data);
-    } catch (err: any) {
-      setError(err.message || "Failed to refresh project details");
-    } finally {
-      setTasksLoading(false);
-    }
+    updateProjectMutation.mutate({ id, data });
   };
 
   const handleTaskClick = (task: Task) => {
@@ -131,29 +54,27 @@ const ProjectDetails = () => {
     if (!project || !project.tasks) return;
 
     if (updatedTask) {
-      const updatedTasks = project.tasks.map((task) =>
+      const updatedTasks = project.tasks.map((task: Task) =>
         task._id === updatedTask._id ? updatedTask : task
       );
 
-      setProject({
+      queryClient.setQueryData(["project", id], {
         ...project,
         tasks: updatedTasks,
       });
-    } else {
-      refreshProject();
     }
   };
 
   const handleTaskCreated = (task: Task) => {
     if (!project || !project.tasks) return;
 
-    setProject({
+    queryClient.setQueryData(["project", id], {
       ...project,
       tasks: [...project.tasks, task],
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
         <Spinner size="lg" />
@@ -164,7 +85,7 @@ const ProjectDetails = () => {
   if (error || !project) {
     return (
       <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
-        {error || "Project not found"}
+        {error?.message || "Project not found"}
       </div>
     );
   }
@@ -215,7 +136,7 @@ const ProjectDetails = () => {
                 <TaskListItem
                   project={project}
                   onTaskClick={handleTaskClick}
-                  loading={tasksLoading}
+                  loading={isLoading}
                 />
               )}
             </div>

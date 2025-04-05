@@ -1,41 +1,37 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProjectList from "./ProjectList";
 import Button from "./Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ProjectFormModal from "./ProjectFormModal";
-import { ProjectFormData } from "../types/Types";
-import { useToast } from "./Toast";
-import { useAppDispatch } from "../store/store";
-import { addProject, fetchProjects } from "../store/slices/projectSlice";
+import { useCreateProject, useProjects } from "../hooks/useApi";
+import { Data, ProjectFormData, Task } from "../types/Types";
 
 const Projects = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const { addToast } = useToast();
-  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(fetchProjects());
-  }, [dispatch]);
+  const {
+    data: projectsData,
+    isLoading,
+    error,
+  } = useProjects({
+    select: (data: Data) => {
+      return data?.data?.projects || [];
+    },
+  });
 
-  const handleAddProject = async (data: ProjectFormData) => {
-    try {
-      await dispatch(addProject(data)).unwrap();
-      addToast({
-        type: "success",
-        title: "Success",
-        message: "Project created successfully",
-        duration: 3000,
-      });
-      setIsAddModalOpen(false);
-    } catch (err: any) {
-      addToast({
-        type: "error",
-        title: "Error",
-        message: err.message || "Failed to create project",
-        duration: 5000,
-      });
-    }
+  const projects: Array<{
+    _id: string;
+    name: string;
+    description?: string;
+    status: "active" | "completed";
+    priority: "low" | "moderate" | "high";
+    deadline: string;
+    tasks?: Task[];
+  }> = Array.isArray(projectsData) ? projectsData : [];
+  const createProjectMutation = useCreateProject();
+  const handleAddProject = (data: ProjectFormData) => {
+    createProjectMutation.mutate(data);
   };
 
   return (
@@ -51,7 +47,11 @@ const Projects = () => {
       </div>
 
       <div className="overflow-auto">
-        <ProjectList />
+        <ProjectList
+          projects={projects}
+          isLoading={isLoading}
+          error={error?.message || null}
+        />
       </div>
 
       <ProjectFormModal

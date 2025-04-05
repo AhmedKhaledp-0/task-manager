@@ -68,8 +68,6 @@ export interface ProjectData {
   priority: "low" | "moderate" | "high";
   deadline: string;
   tasks?: Task[];
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface User {
@@ -143,4 +141,22 @@ export interface ToastContainerProps {
 
 export interface AuthContextType {
   data: User;
+}
+
+export interface Data {
+  data: {
+    projects: {
+      _id: string;
+      name: string;
+      description?: string;
+      status: "active" | "completed";
+      priority: "low" | "moderate" | "high";
+      deadline: string;
+      tasks?: [];
+    }[];
+  };
+}
+
+export interface ErrorMessage {
+  message?: string;
 }
