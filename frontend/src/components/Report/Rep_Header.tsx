@@ -28,13 +28,16 @@ export function ReportHeader({ className }: ReportHeaderProps) {
     const fetchProjectsWithTasks = async () => {
       try {
         const response = await dispatch(fetchProjects()).unwrap();
-        const projectsWithTasks = await Promise.all(
-          response.map(async (project: ProjectData) => {
-            const projectDetails = await dispatch(fetchProjectById(project._id)).unwrap();
-            return projectDetails;
-          })
-        );
-        dispatch(fetchProjects.fulfilled(projectsWithTasks, ""));
+      const rawProjects = Array.isArray(response) ? response : response.data ?? [];
+
+      const projectsWithTasks = await Promise.all(
+        rawProjects.map(async (project: ProjectData) => {
+          const projectDetails = await dispatch(fetchProjectById(project._id)).unwrap();
+          return projectDetails;
+        })
+      );
+      dispatch(fetchProjects.fulfilled(projectsWithTasks, ""));
+
       } catch (error) {
         console.error("Error fetching projects with tasks:", error);
       }
@@ -59,8 +62,8 @@ export function ReportHeader({ className }: ReportHeaderProps) {
     );
   }
 
-  const stats = getProjectStats(projects);
-  const taskStats = getTaskStats(projects);
+  const { active } = getProjectStats(projects);
+  const { inProgress } = getTaskStats(projects);
 
   return (
     <div className={clsx("flex flex-col space-y-2", className)}>
@@ -75,11 +78,11 @@ export function ReportHeader({ className }: ReportHeaderProps) {
         </div>
         <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
           <FontAwesomeIcon icon={faCheckSquare} className="h-4 w-4" />
-          <span>{taskStats.inProgress} Active Tasks</span>
+          <span>{inProgress} Active Tasks</span>
         </div>
         <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
           <FontAwesomeIcon icon={faBriefcase} className="h-4 w-4" />
-          <span>{stats.active} Active Projects</span>
+          <span>{active} Active Projects</span>
         </div>
       </div>
     </div>

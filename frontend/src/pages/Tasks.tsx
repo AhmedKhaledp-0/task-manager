@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { fetchProjects, fetchProjectById } from "../store/slices/projectSlice";
+import { useState } from "react";
 import TaskForm from "../components/TaskForm";
 import TaskListItem from "../components/TaskListItem";
 import Spinner from "../components/Spinner";
@@ -8,34 +6,35 @@ import Button from "../components/Button";
 import ProjectDropdown from "../components/ProjectDropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useProjects, useProject } from "../hooks/useApi";
+import { Data} from "../types/Types";
 
 const Tasks = () => {
-  const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { projects, loading, error } = useAppSelector(
-    (state) => state.projects
-  );
-  const { currentProject } = useAppSelector((state) => state.projects);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
-    null
-  );
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
-  useEffect(() => {
-    dispatch(fetchProjects()); // Fetch all projects
-  }, [dispatch]);
+  const {
+    data: projectsData,
+    isLoading: projectsLoading,
+    error: projectsError,
+  } = useProjects({
+    select: (data: Data) => data?.data?.projects || [],
+  });
 
-  useEffect(() => {
-    if (selectedProjectId) {
-      dispatch(fetchProjectById(selectedProjectId)); // Fetch project details when selected
-    }
-  }, [dispatch, selectedProjectId]);
+  const {
+    data: currentProject,
+    isLoading: projectLoading,
+    error: projectError,
+  } = useProject(selectedProjectId ?? undefined, {
+    enabled: !!selectedProjectId, // Only run this query when a project is selected
+  });
+
+  const projects = Array.isArray(projectsData) ? projectsData : [];
 
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Tasks
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tasks</h1>
         <Button variant="primary" onClick={() => setIsModalOpen(true)}>
           <FontAwesomeIcon icon={faPlus} className="mr-2" />
           Add Task
@@ -59,31 +58,36 @@ const Tasks = () => {
         </div>
       )}
 
-      {loading ? (
+      {projectsLoading ? (
         <div className="flex justify-center py-8">
           <Spinner size="lg" />
         </div>
-      ) : error ? (
-        <p className="text-red-500 text-center">{error}</p>
+      ) : projectsError ? (
+        <p className="text-red-500 text-center">{projectsError.message}</p>
       ) : (
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Select a Project
             </h2>
-            <ProjectDropdown
-              projects={projects}
-              setSelectedProjectId={setSelectedProjectId}
-            />
+            <ProjectDropdown projects={projects} setSelectedProjectId={setSelectedProjectId} />
           </div>
 
-          {selectedProjectId && currentProject && (
-            <div className="pb-4">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                {currentProject.name}
-              </h2>
-              <TaskListItem project={currentProject} onTaskClick={() => {}} />
-            </div>
+          {selectedProjectId && (
+            <>
+              {projectLoading ? (
+                <Spinner size="md" />
+              ) : projectError ? (
+                <p className="text-red-500">{projectError.message}</p>
+              ) : currentProject ? (
+                <div className="pb-4">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    {currentProject.name}
+                  </h2>
+                  <TaskListItem project={currentProject} onTaskClick={() => {}} />
+                </div>
+              ) : null}
+            </>
           )}
         </div>
       )}

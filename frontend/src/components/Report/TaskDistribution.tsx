@@ -8,19 +8,20 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TaskDistribution = () => {
   const projects = useAppSelector(selectAllProjects);
-  const taskStats = getTaskStats(projects);
+  const {
+    completed,
+    inProgress,
+    todo,
+    highPriority
+  } = getTaskStats(projects);
 
   const data = {
     labels: ["Completed", "In Progress", "To Do", "High Priority"],
     datasets: [
       {
-        data: [
-          taskStats.completed,
-          taskStats.inProgress,
-          taskStats.todo,
-          taskStats.highPriority,
-        ],
+        data: [completed, inProgress, todo, highPriority],
         backgroundColor: ["#4ADE80", "#5C9EF4", "#F4C715", "#F87171"],
+        borderWidth: 1,
       },
     ],
   };
