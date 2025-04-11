@@ -14,6 +14,7 @@ import { useAppSelector } from "./store/store";
 import { selectEffectiveTheme } from "./store/slices/themeSlice";
 import { useEffect } from "react";
 import ForgetPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const effectiveTheme = useAppSelector(selectEffectiveTheme);
@@ -39,6 +40,10 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="forgot-password" element={<ForgetPassword />} />
+          <Route
+            path="/user/resetpassword/:token"
+            element={<ResetPassword />}
+          />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="*" element={<Error />} />
         </Routes>

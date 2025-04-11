@@ -12,6 +12,11 @@ export interface SignInData {
   password: string;
 }
 
+export interface ResetPasswordData {
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export const login = async (data: SignInData) => {
   try {
     const response = await Api.post("/auth/login", data);
@@ -46,6 +51,16 @@ export const forgetPassword = async (data: ForgetPasswordData) => {
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to send the Email");
+  }
+};
+
+// Reset Password API
+export const resetPassword = async (token: string, data: ResetPasswordData) => {
+  try {
+    const response = await Api.put(`/user/resetpassword/${token}`, data);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to reset password");
   }
 };
 
