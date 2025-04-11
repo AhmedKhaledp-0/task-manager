@@ -1,14 +1,18 @@
+import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { User } from "../types/Types";
 import Button from "./Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faUser, faKey } from "@fortawesome/free-solid-svg-icons";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const Profile = () => {
   const { data } = useAuth();
   // @ts-ignore - We know response has a user property
   const user = data?.user as User;
   const { firstName, lastName, email } = user;
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
+    useState(false);
 
   const initials =
     firstName && lastName
@@ -33,8 +37,12 @@ const Profile = () => {
                 {firstName} {lastName}
               </h1>
             </div>
-            <Button variant="outline" className="cursor-not-allowed" disabled>
-              Edit Profile
+            <Button
+              variant="outline"
+              onClick={() => setIsChangePasswordModalOpen(true)}
+            >
+              <FontAwesomeIcon icon={faKey} className="mr-2" />
+              Change Password
             </Button>
           </div>
 
@@ -75,6 +83,11 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      <ChangePasswordModal
+        isOpen={isChangePasswordModalOpen}
+        onClose={() => setIsChangePasswordModalOpen(false)}
+      />
     </div>
   );
 };

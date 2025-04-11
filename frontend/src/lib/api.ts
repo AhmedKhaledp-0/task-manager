@@ -17,6 +17,12 @@ export interface ResetPasswordData {
   confirmPassword: string;
 }
 
+export interface ChangePasswordData {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export const login = async (data: SignInData) => {
   try {
     const response = await Api.post("/auth/login", data);
@@ -61,6 +67,16 @@ export const resetPassword = async (token: string, data: ResetPasswordData) => {
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to reset password");
+  }
+};
+
+// Change Password API
+export const changePassword = async (data: ChangePasswordData) => {
+  try {
+    const response = await Api.put("/user/changepassword", data);
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to change password");
   }
 };
 
