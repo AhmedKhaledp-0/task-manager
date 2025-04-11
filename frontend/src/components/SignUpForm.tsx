@@ -99,6 +99,16 @@ const SignUpForm = () => {
           placeholder="Password"
         />
 
+        <FormField
+          type="password"
+          label="Confirm Password"
+          name="confirmPassword"
+          register={register}
+          error={errors.confirmPassword}
+          required={true}
+          placeholder="Confirm Password"
+        />
+
         <Button type="submit" disabled={isPending} className="w-full">
           {isPending ? "Signing up..." : "Sign up"}
         </Button>

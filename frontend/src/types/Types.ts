@@ -25,6 +25,7 @@ export type SignUpFormData = {
   lastName: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 export type ForgetPasswordData = {
@@ -87,20 +88,75 @@ export const ProjectSchema: ZodType<ProjectFormData> = z.object({
 
 export type ValidFieldNames = "firstName" | "lastName" | "email" | "password";
 
-export const SignUpSchema: ZodType<SignUpFormData> = z.object({
-  firstName: z.string().nonempty("First name is required"),
-  lastName: z.string().nonempty("Last name is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+export const SignUpSchema: ZodType<SignUpFormData> = z
+  .object({
+    firstName: z
+      .string()
+      .trim()
+      .min(1, "First name is required")
+      .max(50, "First name is too long")
+      .regex(
+        /^[a-zA-Z\s-]+$/,
+        "First name should only contain letters, spaces, or hyphens"
+      ),
+    lastName: z
+      .string()
+      .trim()
+      .min(1, "Last name is required")
+      .max(50, "Last name is too long")
+      .regex(
+        /^[a-zA-Z\s-]+$/,
+        "Last name should only contain letters, spaces, or hyphens"
+      ),
+    email: z
+      .string()
+      .trim()
+      .email("Invalid email address")
+      .min(1, "Email is required")
+      .max(255, "Email is too long"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(30, "Password is too long")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[^A-Za-z0-9]/,
+        "Password must contain at least one special character"
+      ),
+    confirmPassword: z
+      .string()
+      .min(1, "Confirm password is required")
+      .max(30, "Confirm password is too long"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export const forgetPasswordSchema: ZodType<ForgetPasswordData> = z.object({
   email: z.string().email("Invalid email address"),
 });
 
 export const SignInSchema: ZodType<SignInFormData> = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z
+    .string()
+    .trim()
+    .email("Invalid email address")
+    .min(1, "Email is required")
+    .max(255, "Email is too long"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(30, "Password is too long")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(
+      /[^A-Za-z0-9]/,
+      "Password must contain at least one special character"
+    ),
 });
 
 export const TaskSchema: ZodType<TaskFormData> = z.object({
