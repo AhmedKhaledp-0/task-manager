@@ -10,9 +10,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpSchema, SignUpFormData } from "../types/Types";
 import ThemeToggle from "./ThemeToggle";
 import { Link } from "react-router-dom";
+import { useToast } from "./Toast";
 
 const SignUpForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
+  const { addToast } = useToast();
   const navigate = useNavigate();
 
   const {
@@ -30,6 +32,11 @@ const SignUpForm = () => {
   } = useMutation({
     mutationFn: (data: SignUpData) => registerApi(data),
     onSuccess: () => {
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "Account Created Successfully, Redirecting to Signin ...",
+      });
       navigate("/signin", {
         replace: true,
       });
