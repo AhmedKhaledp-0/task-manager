@@ -1,4 +1,4 @@
-import { Data } from "../types/Types";
+import { Data, ProjectFormData } from "../types/Types";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -8,8 +8,15 @@ import { statsCardsList } from "../utils/list";
 import Spinner from "../components/Spinner";
 import { formatDate } from "../utils/utils";
 import { useProjects } from "../hooks/useApi";
-
+import { useState } from "react";
+import ProjectFormModal from "../components/ProjectFormModal";
+import { useCreateProject } from "../hooks/useApi";
 const Dashboard = () => {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const createProjectMutation = useCreateProject();
+  const handleAddProject = (data: ProjectFormData) => {
+      createProjectMutation.mutate(data);
+    };
   const navigate = useNavigate();
   const {
     data: projectsData,
@@ -110,11 +117,17 @@ const Dashboard = () => {
         <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
           Dashboard
         </h1>
-        <Button variant="primary" onClick={() => navigate("/projects")}>
+        <Button variant="primary" onClick={() => setIsAddModalOpen(true)}>
           <FontAwesomeIcon icon={faPlus} className="mr-2" />
           Add Project
-        </Button>
+        </Button> 
       </div>
+      <ProjectFormModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddProject}
+        title="Add New Project"
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
