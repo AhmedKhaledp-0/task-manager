@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createProject,
   getProjects,
@@ -11,9 +11,19 @@ import { ProjectFormData } from "../types/Types";
 import queryClient from "../config/queryClient";
 import { useToast } from "../components/Toast";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const useProjects = (opts = {}) => {
   const { data: authData } = useAuth();
+  const queryClient = useQueryClient();
+
+  // Invalidate the projects query when authData changes
+  useEffect(() => {
+    if (authData) {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    }
+  }, [authData, queryClient]);
+
   const { data, ...rest } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
@@ -24,7 +34,6 @@ export const useProjects = (opts = {}) => {
 
   return { data, ...rest };
 };
-
 
 export const useCreateProject = (opts = {}) => {
   const { addToast } = useToast();
@@ -67,9 +76,7 @@ export const useUpdateProject = (opts = {}) => {
     },
     onSuccess: (variables) => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-
       queryClient.invalidateQueries({ queryKey: ["project", variables.id] });
-
       console.log("Project updated successfully");
       addToast({
         type: "success",
@@ -125,7 +132,6 @@ export const useDeleteProject = (opts = {}) => {
 
 export const useProject = (id: string | undefined, opts = {}) => {
   const { data: authData } = useAuth();
-  // Fetch the project only if the user is authenticated
   return useQuery({
     queryKey: ["project", id],
     queryFn: async () => {
