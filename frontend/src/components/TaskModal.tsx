@@ -119,7 +119,7 @@ const TaskModal = ({
             />
           ) : (
             <>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+              <h3 className="text-lg font-semibold text-gray-900 break-words whitespace-normal dark:text-white mb-3">
                 {currentTask.name}
               </h3>
 

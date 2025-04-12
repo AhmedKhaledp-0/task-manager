@@ -55,11 +55,11 @@ const UserMenu = () => {
           {initials}
         </div>
         <div className="flex-1 text-left">
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <div className="text-sm font-medium text-gray-900 dark:text-white ">
             {firstName} {lastName}
           </div>
-          <div className="text-xs text-gray-500 dark:text-zinc-400">
-            {email}
+          <div className="text-xs text-gray-500 dark:text-zinc-400" title={email}>
+            {email.length > 16 ? `${email.slice(0, 16)}...` : email}
           </div>
         </div>
       </button>

@@ -6,20 +6,25 @@ import {
   deleteProject,
   getProjectById,
 } from "../lib/api";
+import useAuth from "./useAuth";
 import { ProjectFormData } from "../types/Types";
 import queryClient from "../config/queryClient";
 import { useToast } from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 
 export const useProjects = (opts = {}) => {
+  const { data: authData } = useAuth();
   const { data, ...rest } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
     staleTime: Infinity,
+    enabled: !!authData,
     ...opts,
   });
+
   return { data, ...rest };
 };
+
 
 export const useCreateProject = (opts = {}) => {
   const { addToast } = useToast();
@@ -119,14 +124,18 @@ export const useDeleteProject = (opts = {}) => {
 };
 
 export const useProject = (id: string | undefined, opts = {}) => {
+  const { data: authData } = useAuth();
+  // Fetch the project only if the user is authenticated
   return useQuery({
     queryKey: ["project", id],
     queryFn: async () => {
       if (!id) throw new Error("Project ID is required");
+      if (!authData) throw new Error("User must be authenticated to fetch project");
+
       const response = await getProjectById(id);
       return response.data;
     },
-    enabled: !!id,
+    enabled: !!id && !!authData,
     staleTime: 1000 * 60 * 5,
     ...opts,
   });

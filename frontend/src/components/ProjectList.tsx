@@ -52,7 +52,7 @@ const ProjectList = ({ projects, isLoading, error }: pr) => {
         >
           <div className="p-6">
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-lg font-semibold text-gray-900 break-words whitespace-normal dark:text-white">
                 {project.name}
               </h3>
               <span
