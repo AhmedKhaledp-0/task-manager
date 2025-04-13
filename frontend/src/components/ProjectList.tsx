@@ -46,8 +46,8 @@ const ProjectList = ({ projects, isLoading, error }: pr) => {
     <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
       {projects.map((project) => (
         <div
-          key={project._id}
-          onClick={() => handleProjectClick(project._id)}
+          key={project.id}
+          onClick={() => handleProjectClick(project.id)}
           className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-zinc-700 overflow-hidden cursor-pointer hover:border-blue-500 dark:hover:border-blue-400"
         >
           <div className="p-6">

@@ -68,7 +68,7 @@ export interface Task {
 }
 
 export interface ProjectData {
-  _id: string;
+  id: string;
   name: string;
   description?: string;
   status: "active" | "completed";
