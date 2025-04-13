@@ -57,7 +57,7 @@ export type TaskFormData = {
 };
 
 export interface Task {
-  _id: string;
+  id: string;
   name: string;
   description?: string;
   status: "todo" | "in-progress" | "completed";
@@ -263,7 +263,7 @@ export interface AuthContextType {
 export interface Data {
   data: {
     projects: {
-      _id: string;
+      id: string;
       name: string;
       description?: string;
       status: "active" | "completed";

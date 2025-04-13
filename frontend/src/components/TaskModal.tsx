@@ -33,7 +33,7 @@ const TaskModal = ({
   const [currentTask, setCurrentTask] = useState<Task>(task);
   const loading = useAppSelector((state) => state.tasks.loading);
 
-  if (task._id !== currentTask._id) {
+  if (task.id !== currentTask.id) {
     setCurrentTask(task);
   }
 
@@ -44,7 +44,7 @@ const TaskModal = ({
 
     try {
       setIsDeleting(true);
-      await dispatch(deleteExistingTask(currentTask._id)).unwrap();
+      await dispatch(deleteExistingTask(currentTask.id)).unwrap();
       addToast({
         type: "success",
         title: "Success",
@@ -77,7 +77,7 @@ const TaskModal = ({
     try {
       const result = await dispatch(
         updateExistingTask({
-          id: currentTask._id,
+          id: currentTask.id,
           data: updatedTask,
         })
       ).unwrap();

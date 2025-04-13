@@ -35,11 +35,11 @@ const ProjectDropdown = ({
         >
           {projects.map((project) => (
             <div
-              key={project._id}
+              key={project.id}
               className="flex items-center px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 
                          transition cursor-pointer"
               onClick={() => {
-                setSelectedProjectId(project._id);
+                setSelectedProjectId(project.id);
                 setIsOpen(false);
               }}
             >

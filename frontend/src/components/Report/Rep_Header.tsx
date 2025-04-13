@@ -1,15 +1,22 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faCheckSquare, faBriefcase } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarDays,
+  faCheckSquare,
+  faBriefcase,
+} from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
 import Spinner from "../Spinner";
 import { useEffect } from "react";
-import { 
-  selectAllProjects, 
-  selectProjectsError, 
-  selectProjectsLoading 
+import {
+  selectAllProjects,
+  selectProjectsError,
+  selectProjectsLoading,
 } from "../../store/selectors";
 import { useAppDispatch, useAppSelector } from "../../store/store";
-import { fetchProjects, fetchProjectById } from "../../store/slices/projectSlice";
+import {
+  fetchProjects,
+  fetchProjectById,
+} from "../../store/slices/projectSlice";
 import { ProjectData } from "../../types/Types";
 
 import { getProjectStats, getTaskStats } from "../ProjectTaskStates";
@@ -28,16 +35,19 @@ export function ReportHeader({ className }: ReportHeaderProps) {
     const fetchProjectsWithTasks = async () => {
       try {
         const response = await dispatch(fetchProjects()).unwrap();
-      const rawProjects = Array.isArray(response) ? response : response.data ?? [];
+        const rawProjects = Array.isArray(response)
+          ? response
+          : response.data ?? [];
 
-      const projectsWithTasks = await Promise.all(
-        rawProjects.map(async (project: ProjectData) => {
-          const projectDetails = await dispatch(fetchProjectById(project._id)).unwrap();
-          return projectDetails;
-        })
-      );
-      dispatch(fetchProjects.fulfilled(projectsWithTasks, ""));
-
+        const projectsWithTasks = await Promise.all(
+          rawProjects.map(async (project: ProjectData) => {
+            const projectDetails = await dispatch(
+              fetchProjectById(project.id)
+            ).unwrap();
+            return projectDetails;
+          })
+        );
+        dispatch(fetchProjects.fulfilled(projectsWithTasks, ""));
       } catch (error) {
         console.error("Error fetching projects with tasks:", error);
       }
@@ -67,7 +77,9 @@ export function ReportHeader({ className }: ReportHeaderProps) {
 
   return (
     <div className={clsx("flex flex-col space-y-2", className)}>
-      <h1 className="text-3xl font-bold tracking-tight">Productivity Reports</h1>
+      <h1 className="text-3xl font-bold tracking-tight">
+        Productivity Reports
+      </h1>
       <p className="text-gray-600 dark:text-gray-400 text-sm leading-6">
         Track productivity, monitor progress, and improve team performance
       </p>

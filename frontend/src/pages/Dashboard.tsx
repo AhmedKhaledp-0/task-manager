@@ -15,8 +15,8 @@ const Dashboard = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const createProjectMutation = useCreateProject();
   const handleAddProject = (data: ProjectFormData) => {
-      createProjectMutation.mutate(data);
-    };
+    createProjectMutation.mutate(data);
+  };
   const navigate = useNavigate();
   const {
     data: projectsData,
@@ -33,7 +33,7 @@ const Dashboard = () => {
     priority: string;
     tasks?: any[];
     deadline: string;
-    _id: string;
+    id: string;
     name: string;
     description?: string;
   }> = Array.isArray(projectsData) ? projectsData : [];
@@ -120,7 +120,7 @@ const Dashboard = () => {
         <Button variant="primary" onClick={() => setIsAddModalOpen(true)}>
           <FontAwesomeIcon icon={faPlus} className="mr-2" />
           Add Project
-        </Button> 
+        </Button>
       </div>
       <ProjectFormModal
         isOpen={isAddModalOpen}
@@ -234,9 +234,9 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   {upcomingDeadlines.map((project) => (
                     <div
-                      key={project._id}
+                      key={project.id}
                       className="p-4 border border-gray-100 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-700/50 cursor-pointer"
-                      onClick={() => navigate(`/project/${project._id}`)}
+                      onClick={() => navigate(`/project/${project.id}`)}
                     >
                       <h3 className="font-medium text-gray-900 dark:text-white">
                         {project.name}
@@ -270,8 +270,8 @@ const Dashboard = () => {
                 <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                   {projects.slice(0, 4).map((project) => (
                     <div
-                      key={project._id}
-                      onClick={() => navigate(`/project/${project._id}`)}
+                      key={project.id}
+                      onClick={() => navigate(`/project/${project.id}`)}
                       className="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4 hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-zinc-700 cursor-pointer"
                     >
                       <h3 className="font-medium text-gray-900 dark:text-white mb-2">

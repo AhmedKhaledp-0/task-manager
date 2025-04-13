@@ -160,11 +160,11 @@ const projectsSlice = createSlice({
         (state, action: PayloadAction<string>) => {
           state.loading = false;
           state.projects = state.projects.filter(
-            (project) => project._id !== action.payload
+            (project) => project.id !== action.payload
           );
           if (
             state.currentProject &&
-            state.currentProject._id === action.payload
+            state.currentProject.id === action.payload
           ) {
             state.currentProject = null;
           }
@@ -185,14 +185,14 @@ const projectsSlice = createSlice({
         (state, action: PayloadAction<ProjectData>) => {
           state.loading = false;
           const index = state.projects.findIndex(
-            (project) => project._id === action.payload._id
+            (project) => project.id === action.payload.id
           );
           if (index !== -1) {
             state.projects[index] = action.payload;
           }
           if (
             state.currentProject &&
-            state.currentProject._id === action.payload._id
+            state.currentProject.id === action.payload.id
           ) {
             state.currentProject = action.payload;
           }

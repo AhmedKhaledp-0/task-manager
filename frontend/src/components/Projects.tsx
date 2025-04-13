@@ -21,7 +21,7 @@ const Projects = () => {
   });
 
   const projects: Array<{
-    _id: string;
+    id: string;
     name: string;
     description?: string;
     status: "active" | "completed";

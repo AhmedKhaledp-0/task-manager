@@ -90,7 +90,7 @@ const TaskForm = () => {
     ? [{ value: "", label: "Loading projects..." }]
     : projects && projects.length > 0
     ? projects.map((project) => ({
-        value: project._id,
+        value: project.id,
         label: project.name,
       }))
     : [{ value: "", label: "No projects available" }];

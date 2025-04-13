@@ -44,7 +44,7 @@ export const updateExistingTask = createAsyncThunk(
   "tasks/updateTask",
   async ({ id, data }: { id: string; data: any }) => {
     await updateTask(id, data);
-    return { ...data, _id: id };
+    return { ...data, id: id };
   }
 );
 
@@ -107,12 +107,12 @@ const taskSlice = createSlice({
       .addCase(updateExistingTask.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.tasks.findIndex(
-          (task) => task._id === action.payload._id
+          (task) => task.id === action.payload.id
         );
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
-        if (state.selectedTask?._id === action.payload._id) {
+        if (state.selectedTask?.id === action.payload.id) {
           state.selectedTask = action.payload;
         }
       })
@@ -127,8 +127,8 @@ const taskSlice = createSlice({
       })
       .addCase(deleteExistingTask.fulfilled, (state, action) => {
         state.loading = false;
-        state.tasks = state.tasks.filter((task) => task._id !== action.payload);
-        if (state.selectedTask?._id === action.payload) {
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+        if (state.selectedTask?.id === action.payload) {
           state.selectedTask = null;
         }
       })

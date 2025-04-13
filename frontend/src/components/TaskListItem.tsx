@@ -25,7 +25,7 @@ const TaskListItem = ({
 
   const handleTaskClick = async (task: Task) => {
     try {
-      await dispatch(fetchTask(task._id)).unwrap();
+      await dispatch(fetchTask(task.id)).unwrap();
       dispatch(setSelectedTask(task));
       onTaskClick(task);
     } catch (err: any) {
@@ -54,13 +54,13 @@ const TaskListItem = ({
       {tasks.length > 0 ? (
         <div className="space-y-4">
           {tasks.map(
-            ({ _id, name, description, priority, status, deadline }) => (
+            ({ id, name, description, priority, status, deadline }) => (
               <div
-                key={_id}
+                key={id}
                 className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-gray-200 dark:border-zinc-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700/50 transition-colors"
                 onClick={() =>
                   handleTaskClick({
-                    _id,
+                    id,
                     name,
                     description,
                     priority,

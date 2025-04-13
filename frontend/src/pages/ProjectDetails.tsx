@@ -55,7 +55,7 @@ const ProjectDetails = () => {
 
     if (updatedTask) {
       const updatedTasks = project.tasks.map((task: Task) =>
-        task._id === updatedTask._id ? updatedTask : task
+        task.id === updatedTask.id ? updatedTask : task
       );
 
       queryClient.setQueryData(["project", id], {
