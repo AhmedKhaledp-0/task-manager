@@ -5,13 +5,13 @@ import Button from "./Button";
 import { useToast } from "./Toast";
 import { useAppDispatch } from "../store/hooks";
 import { createNewTask } from "../store/slices/taskSlice";
-import { TaskFormData } from "../types/Types";
+import { Task } from "../types/Types";
 
 interface CreateTaskModalProps {
   projectId: string;
   isOpen: boolean;
   onClose: () => void;
-  onTaskCreated: (task: TaskFormData) => void;
+  onTaskCreated: (task: Task) => void;
 }
 
 const CreateTaskModal = ({
