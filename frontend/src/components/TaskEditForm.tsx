@@ -39,14 +39,15 @@ const TaskEditForm = ({ task, onSave, onCancel }: TaskEditFormProps) => {
         duration: 3000,
       });
 
-      // Create updated task object with all fields
+      const fullISODeadline = new Date(`${deadline}T23:59:59Z`).toISOString();
+
       const updatedTask: Task = {
         ...task,
         name,
         description,
         status: status as Task["status"],
         priority: priority as Task["priority"],
-        deadline: new Date(deadline).toISOString(),
+        deadline: fullISODeadline,
       };
 
       onSave(updatedTask);

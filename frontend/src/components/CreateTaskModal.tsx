@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Button from "./Button";
 import { useToast } from "./Toast";
 import { useAppDispatch } from "../store/hooks";
 import { createNewTask } from "../store/slices/taskSlice";
-import { Task } from "../types/Types";
+import { TaskFormData } from "../types/Types";
 
 interface CreateTaskModalProps {
   projectId: string;
   isOpen: boolean;
   onClose: () => void;
-  onTaskCreated: (task: Task) => void;
+  onTaskCreated: (task: TaskFormData) => void;
 }
 
 const CreateTaskModal = ({
@@ -32,12 +32,17 @@ const CreateTaskModal = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      const fullISODeadline = new Date(
+        `${formData.deadline}T00:00:00Z`
+      ).toISOString();
+
       const result = await dispatch(
         createNewTask({
           ...formData,
+          deadline: fullISODeadline,
           projectId,
         })
       ).unwrap();
@@ -69,9 +74,7 @@ const CreateTaskModal = ({
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({

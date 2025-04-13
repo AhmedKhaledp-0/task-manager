@@ -40,7 +40,7 @@ export type ResetPasswordData = {
 
 export type ProjectFormData = {
   name: string;
-  deadline: Date | string;
+  deadline: Date;
   status: string;
   priority: string;
   description?: string;

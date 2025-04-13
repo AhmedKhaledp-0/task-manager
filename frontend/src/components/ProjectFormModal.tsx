@@ -46,16 +46,6 @@ const ProjectFormModal = ({
       setValue("status", project.status);
       setValue("priority", project.priority);
       setValue("deadline", project.deadline);
-      if (project.deadline) {
-        const deadlineDate =
-          project.deadline instanceof Date
-            ? project.deadline
-            : new Date(project.deadline);
-
-        // Format date as YYYY-MM-DD for the input field
-        const formattedDate = deadlineDate.toISOString().split("T")[0];
-        setValue("deadline", formattedDate);
-      }
     }
   }, [project, setValue]);
 
