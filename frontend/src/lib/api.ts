@@ -114,7 +114,7 @@ export const createProject = async (data: any) => {
 
 export const getProjects = async () => {
   try {
-    const response = await Api.get("/projects");
+    const response = await Api.get("/projects?page=1&limit=10");
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to fetch projects");
