@@ -22,6 +22,7 @@ export const useProjects = (opts = {}) => {
   useEffect(() => {
     if (authData) {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["insights"] });
     }
   }, [authData, queryClient]);
 
@@ -46,6 +47,7 @@ export const useCreateProject = (opts = {}) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["insights"] });
       addToast({
         type: "success",
         title: "Success",
@@ -78,6 +80,7 @@ export const useUpdateProject = (opts = {}) => {
     onSuccess: (variables) => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["project", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["insights"] });
       console.log("Project updated successfully");
       addToast({
         type: "success",
@@ -109,6 +112,7 @@ export const useDeleteProject = (opts = {}) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["insights"] });
       console.log("Project deleted successfully");
 
       addToast({
