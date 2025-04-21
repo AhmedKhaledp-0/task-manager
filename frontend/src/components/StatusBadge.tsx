@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
 
-type StatusType = "in-progress" | "completed" | "todo";
+type StatusType = "inProgress" | "completed" | "todo";
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -18,7 +18,7 @@ export const StatusBadge: FC<StatusBadgeProps> = ({
   className = "",
 }) => {
   const statusConfig = {
-    "in-progress": {
+    inProgress: {
       bg: "bg-yellow-100 dark:bg-yellow-900/30",
       border: "border-yellow-200 dark:border-yellow-800",
       text: "text-yellow-800 dark:text-yellow-300",

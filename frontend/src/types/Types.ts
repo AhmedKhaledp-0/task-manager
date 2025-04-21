@@ -60,7 +60,7 @@ export interface Task {
   id: string;
   name: string;
   description?: string;
-  status: "todo" | "in-progress" | "completed";
+  status: "todo" | "inProgress" | "completed";
   priority: "low" | "moderate" | "high";
   deadline: string;
   createdAt: string;

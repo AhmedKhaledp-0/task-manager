@@ -11,7 +11,7 @@ interface Task {
   priority: string;
 }
 
-export const getProjectStats = (projects: Project[]=[]) => {
+export const getProjectStats = (projects: Project[] = []) => {
   if (!Array.isArray(projects)) {
     console.error("Invalid data type for projects:", projects);
     return {
@@ -33,7 +33,7 @@ export const getProjectStats = (projects: Project[]=[]) => {
   };
 };
 
-export const getTaskStats = (projects: Project[]=[]) => {
+export const getTaskStats = (projects: Project[] = []) => {
   if (!Array.isArray(projects)) {
     console.error("Invalid data type for projects:", projects);
     return {
@@ -45,10 +45,16 @@ export const getTaskStats = (projects: Project[]=[]) => {
     };
   }
   const allTasks = projects.flatMap((p) => p.tasks || []);
-  const completedTasks = allTasks.filter((t) => t.status === "completed").length;
-  const inProgressTasks = allTasks.filter((t) => t.status === "in-progress").length;
+  const completedTasks = allTasks.filter(
+    (t) => t.status === "completed"
+  ).length;
+  const inProgressTasks = allTasks.filter(
+    (t) => t.status === "inProgress"
+  ).length;
   const todoTasks = allTasks.filter((t) => t.status === "todo").length;
-  const highPriorityTasks = allTasks.filter((t) => t.priority === "high").length;
+  const highPriorityTasks = allTasks.filter(
+    (t) => t.priority === "high"
+  ).length;
 
   return {
     completed: completedTasks,
@@ -59,7 +65,7 @@ export const getTaskStats = (projects: Project[]=[]) => {
   };
 };
 
-export const getUpcomingDeadlines = (projects: Project[]=[]) => {
+export const getUpcomingDeadlines = (projects: Project[] = []) => {
   if (!Array.isArray(projects)) {
     console.error("Invalid data type for projects:", projects);
     return [];
@@ -70,6 +76,9 @@ export const getUpcomingDeadlines = (projects: Project[]=[]) => {
       const deadline = new Date(project.deadline);
       return deadline > new Date();
     })
-    .sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime())
+    .sort(
+      (a, b) =>
+        new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime()
+    )
     .slice(0, 5);
 };

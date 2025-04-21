@@ -66,7 +66,7 @@ const TaskEditForm = ({ task, onSave, onCancel }: TaskEditFormProps) => {
 
   const statusOptions = [
     { value: "todo", label: "To Do" },
-    { value: "in-progress", label: "In Progress" },
+    { value: "inProgress", label: "In Progress" },
     { value: "completed", label: "Completed" },
   ];
 

@@ -151,8 +151,8 @@ const CreateTaskModal = ({
                   className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-700 dark:text-white"
                 >
                   <option value="todo">To Do</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="done">Done</option>
+                  <option value="inProgress">In Progress</option>
+                  <option value="completed">Done</option>
                 </select>
               </div>
 
