@@ -76,6 +76,13 @@ export interface ProjectData {
   deadline: string;
   tasks?: Task[];
 }
+export interface InsightsProject {
+  id: string;
+  name: string;
+  status: "active" | "completed";
+  priority: "low" | "moderate" | "high";
+  progress: number;
+}
 
 export interface User {
   _id: string;

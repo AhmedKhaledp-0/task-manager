@@ -1,13 +1,13 @@
-import { Data, ProjectFormData } from "../types/Types";
+import { InsightsProject, ProjectFormData, Task } from "../types/Types";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import Button from "../components/Button";
 import { statsCardsList } from "../utils/list";
 import Spinner from "../components/Spinner";
 import { formatDate } from "../utils/utils";
-import { useProjects } from "../hooks/useApi";
+import { useInsights } from "../hooks/useApi";
 import { useState } from "react";
 import ProjectFormModal from "../components/ProjectFormModal";
 import { useCreateProject } from "../hooks/useApi";
@@ -18,76 +18,79 @@ const Dashboard = () => {
     createProjectMutation.mutate(data);
   };
   const navigate = useNavigate();
-  const {
-    data: projectsData,
-    isLoading,
-    error,
-  } = useProjects({
-    select: (data: Data) => {
-      return data?.data?.projects || [];
-    },
-  });
 
-  const projects: Array<{
-    status: string;
-    priority: string;
-    tasks?: any[];
-    deadline: string;
-    id: string;
-    name: string;
-    description?: string;
-  }> = Array.isArray(projectsData) ? projectsData : [];
+  const { data: insights, isLoading, error } = useInsights();
+
   const getProjectStats = () => {
-    const totalProjects = projects.length;
-    const completed = projects.filter((p) => p.status === "completed").length;
-    const active = projects.filter((p) => p.status === "active").length;
-    const highPriority = projects.filter((p) => p.priority === "high").length;
+    if (!insights)
+      return { totalProjects: 0, completed: 0, active: 0, highPriority: 0 };
 
-    return { totalProjects, completed, active, highPriority };
+    const projectsGeneral = insights.projects.general;
+    type StatusItem = { status: string; _count: number };
+    type PriorityItem = { priority: string; _count: number };
+
+    const statuesCount = Object.values(projectsGeneral.status) as StatusItem[];
+
+    const activeCount =
+      statuesCount.filter((item) => item.status === "active")[0]?._count || 0;
+
+    const completedCount =
+      statuesCount.filter((item) => item.status === "completed")[0]?._count ||
+      0;
+
+    const priorityCount = Object.values(
+      projectsGeneral.priority
+    ) as PriorityItem[];
+    const highPriorityCount =
+      priorityCount.filter((item) => item.priority === "high")[0]?._count || 0;
+
+    return {
+      totalProjects: projectsGeneral.total || 0,
+      completed: completedCount,
+      active: activeCount,
+      highPriority: highPriorityCount,
+    };
   };
 
-  // const getTaskStats = () => {
-  //   const allTasks = projects.flatMap((p) => p.tasks || []);
-  //   const totalTasks = allTasks.length;
-  //   const completedTasks = allTasks.filter(
-  //     (t) => t.status === "completed"
-  //   ).length;
-  //   const inProgressTasks = allTasks.filter(
-  //     (t) => t.status === "in-progress"
-  //   ).length;
-  //   const todoTasks = allTasks.filter((t) => t.status === "todo").length;
-  //   const highPriorityTasks = allTasks.filter(
-  //     (t) => t.priority === "high"
-  //   ).length;
+  const getTaskStats = () => {
+    if (!insights)
+      return {
+        total: 0,
+        completed: 0,
+        inProgress: 0,
+        todo: 0,
+        highPriority: 0,
+      };
 
-  //   return {
-  //     totalTasks,
-  //     completedTasks,
-  //     inProgressTasks,
-  //     todoTasks,
-  //     highPriorityTasks,
-  //   };
-  // };
+    const tasksGeneral = insights.tasks.general;
+    type StatusItem = { status: string; _count: number };
+    type PriorityItem = { priority: string; _count: number };
+    const statuesCount = Object.values(tasksGeneral.status) as StatusItem[];
+    const priorityCount = Object.values(
+      tasksGeneral.priority
+    ) as PriorityItem[];
 
-  const getUpcomingDeadlines = () => {
-    const now = new Date();
-    const sevenDaysLater = new Date();
-    sevenDaysLater.setDate(now.getDate() + 7);
+    const totalCount = tasksGeneral.total || 0;
 
-    return projects
-      .filter((project) => {
-        const deadline = new Date(project.deadline);
-        return (
-          deadline >= now &&
-          deadline <= sevenDaysLater &&
-          project.status === "active"
-        );
-      })
-      .sort(
-        (a, b) =>
-          new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
-      )
-      .slice(0, 3);
+    const completedCount =
+      statuesCount.filter((item) => item.status === "completed")[0]?._count ||
+      0;
+    const inProgressCount =
+      statuesCount.filter((item) => item.status === "inProgress")[0]?._count ||
+      0;
+    const todoCount =
+      statuesCount.filter((item) => item.status === "todo")[0]?._count || 0;
+
+    const highPriorityCount =
+      priorityCount.filter((item) => item.priority === "high")[0]?._count || 0;
+
+    return {
+      total: totalCount || 0,
+      completed: completedCount,
+      inProgress: inProgressCount,
+      todo: todoCount,
+      highPriority: highPriorityCount,
+    };
   };
 
   if (isLoading) {
@@ -107,8 +110,7 @@ const Dashboard = () => {
   }
 
   const stats = getProjectStats();
-  // const taskStats = getTaskStats();
-  const upcomingDeadlines = getUpcomingDeadlines();
+  const taskStats = getTaskStats();
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -161,96 +163,99 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Task Insights */}
-      {/* <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 mb-8">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-zinc-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Task Insights
-          </h2>
-        </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4 flex flex-col">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                Total Tasks
-              </h3>
-              <p className="text-3xl flex-grow flex justify-center items-center font-semibold self-center text-center text-gray-900 dark:text-white">
-                {taskStats.totalTasks}
-              </p>
+      <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="xl:col-span-1">
+          {/* Task Statistics */}
+          <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 overflow-hidden mb-8">
+            <div className="px-6 flex justify-between items-center py-4 border-b border-gray-200 dark:border-zinc-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Task Overview
+              </h2>
+              <div className="flex items-center py-1 px-2 rounded-md bg-zinc-200 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200 justify-center ">
+                {taskStats.total}
+              </div>
             </div>
-            <div className="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                Tasks by Status
-              </h3>
-              <div className="space-y-2">
+            <div className="p-6">
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     Completed
                   </span>
-                  <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                    {taskStats.completedTasks}
+                  <span className="font-semibold text-green-600 dark:text-green-400">
+                    {taskStats.completed}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     In Progress
                   </span>
-                  <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                    {taskStats.inProgressTasks}
+                  <span className="font-semibold text-amber-600 dark:text-amber-400">
+                    {taskStats.inProgress}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     To Do
                   </span>
-                  <span className="text-sm font-medium text-yellow-600 dark:text-yellow-400">
-                    {taskStats.todoTasks}
+                  <span className="font-semibold text-blue-600 dark:text-blue-400">
+                    {taskStats.todo}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    High Priority
+                  </span>
+                  <span className="font-semibold text-red-600 dark:text-red-400">
+                    {taskStats.highPriority}
                   </span>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4 flex flex-col">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                High Priority Tasks
-              </h3>
-              <p className="text-3xl font-semibold text-red-600 dark:text-red-400 flex-grow flex items-center justify-center">
-                {taskStats.highPriorityTasks}
-              </p>
-            </div>
           </div>
-        </div>
-      </div> */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-8">
-        <div className="xl:col-span-1">
+          {/* Upcoming Deadlines */}
           <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-700 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-zinc-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Upcoming Deadlines
+                Recently Completed Tasks
               </h2>
             </div>
             <div className="p-6">
-              {upcomingDeadlines.length > 0 ? (
+              {insights?.tasks?.productivity?.lastSeven?.length > 0 ? (
                 <div className="space-y-4">
-                  {upcomingDeadlines.map((project) => (
-                    <div
-                      key={project.id}
-                      className="p-4 border border-gray-100 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-700/50 cursor-pointer"
-                      onClick={() => navigate(`/project/${project.id}`)}
-                    >
-                      <h3 className="font-medium text-gray-900 dark:text-white">
-                        {project.name}
-                      </h3>
-                      <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        <FontAwesomeIcon icon={faCalendar} className="mr-2" />
-                        Due: {formatDate(project.deadline)}
+                  {insights.tasks.productivity.lastSeven.map(
+                    ({ id, name, priority, updatedAt }: Task) => (
+                      <div
+                        key={id}
+                        className="p-4 border border-gray-100 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-700/50"
+                      >
+                        <h3 className="font-medium text-gray-900 dark:text-white">
+                          {name}
+                        </h3>
+                        <div className="flex items-center justify-between mt-2 text-sm">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium
+                          ${
+                            priority === "high"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                              : priority === "moderate"
+                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                              : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                          }`}
+                          >
+                            {priority}
+                          </span>
+                          <span className="text-gray-500 dark:text-gray-400">
+                            {formatDate(updatedAt)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-                  No upcoming deadlines
+                  No completed tasks in the last 7 days
                 </div>
               )}
             </div>
@@ -266,41 +271,64 @@ const Dashboard = () => {
               </h2>
             </div>
             <div className="p-6">
-              {projects.length > 0 ? (
+              {insights?.projects?.progresses?.length > 0 ? (
                 <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-                  {projects.slice(0, 4).map((project) => (
-                    <div
-                      key={project.id}
-                      onClick={() => navigate(`/project/${project.id}`)}
-                      className="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4 hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-zinc-700 cursor-pointer"
-                    >
-                      <h3 className="font-medium text-gray-900 dark:text-white mb-2">
-                        {project.name}
-                      </h3>
-                      {project.description && (
-                        <p className="text-gray-600 dark:text-zinc-400 text-sm mb-3 line-clamp-2">
-                          {project.description}
-                        </p>
-                      )}
-                      <div className="flex justify-between items-center text-sm">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium
+                  {insights.projects.progresses.map(
+                    ({
+                      id,
+                      name,
+                      status,
+                      progress,
+                      priority,
+                    }: InsightsProject) => (
+                      <div
+                        key={id}
+                        onClick={() => navigate(`/project/${id}`)}
+                        className="bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4 hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-zinc-700 cursor-pointer"
+                      >
+                        <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+                          {name}
+                        </h3>
+
+                        {/* Progress bar */}
+                        <div className="w-full bg-gray-200 dark:bg-zinc-600 rounded-full h-2.5 mb-3">
+                          <div
+                            className={`h-2.5 rounded-full ${
+                              status === "completed"
+                                ? "bg-green-500"
+                                : "bg-blue-500"
+                            }`}
+                            style={{ width: `${progress || 0}%` }}
+                          ></div>
+                        </div>
+
+                        <div className="flex justify-between items-center text-sm">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium
                           ${
-                            project.priority === "high"
+                            priority === "high"
                               ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
-                              : project.priority === "moderate"
+                              : priority === "moderate"
                               ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
                               : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
                           }`}
-                        >
-                          {project.priority}
-                        </span>
-                        <span className="text-gray-500 dark:text-gray-400">
-                          Due: {formatDate(project.deadline)}
-                        </span>
+                          >
+                            {priority}
+                          </span>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium
+                          ${
+                            status === "completed"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                              : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                          }`}
+                          >
+                            {status}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-6 text-gray-500 dark:text-gray-400">
@@ -308,7 +336,7 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {projects.length > 4 && (
+              {insights?.projects?.progresses?.length > 4 && (
                 <div className="mt-4 text-center">
                   <Button
                     variant="secondary"

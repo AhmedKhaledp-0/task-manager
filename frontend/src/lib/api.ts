@@ -23,6 +23,16 @@ export interface ChangePasswordData {
   confirmPassword: string;
 }
 
+// insights api
+export const getDashboardInsights = async () => {
+  try {
+    const response = await Api.get("/insights/dashboard");
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch dashboard insights");
+  }
+};
+
 export const login = async (data: SignInData) => {
   try {
     const response = await Api.post("/auth/login", data);

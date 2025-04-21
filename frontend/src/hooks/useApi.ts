@@ -5,6 +5,7 @@ import {
   updateProject,
   deleteProject,
   getProjectById,
+  getDashboardInsights,
 } from "../lib/api";
 import useAuth from "./useAuth";
 import { ProjectFormData } from "../types/Types";
@@ -136,12 +137,29 @@ export const useProject = (id: string | undefined, opts = {}) => {
     queryKey: ["project", id],
     queryFn: async () => {
       if (!id) throw new Error("Project ID is required");
-      if (!authData) throw new Error("User must be authenticated to fetch project");
+      if (!authData)
+        throw new Error("User must be authenticated to fetch project");
 
       const response = await getProjectById(id);
       return response.data;
     },
     enabled: !!id && !!authData,
+    staleTime: 1000 * 60 * 5,
+    ...opts,
+  });
+};
+
+export const useInsights = (opts = {}) => {
+  const { data: authData } = useAuth();
+  return useQuery({
+    queryKey: ["insights"],
+    queryFn: async () => {
+      if (!authData)
+        throw new Error("User must be authenticated to fetch insights");
+      const response = await getDashboardInsights();
+      return response.data;
+    },
+    enabled: !!authData,
     staleTime: 1000 * 60 * 5,
     ...opts,
   });
