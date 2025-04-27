@@ -8,12 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TaskDistribution = () => {
   const projects = useAppSelector(selectAllProjects);
-  const {
-    completed,
-    inProgress,
-    todo,
-    highPriority
-  } = getTaskStats(projects);
+  const { completed, inProgress, todo, highPriority } = getTaskStats(projects);
 
   const data = {
     labels: ["Completed", "In Progress", "To Do", "High Priority"],
@@ -27,9 +22,29 @@ const TaskDistribution = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow w-full">
-      <h2 className="text-lg font-semibold mb-2">Task Distribution</h2>
-      <Pie data={data} />
+    <div className="bg-white p-6 rounded-lg shadow-md dark:bg-zinc-800 w-full md:max-w-md">
+      <h2 className="text-lg font-semibold mb-4">Task Distribution</h2>
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={0}
+            outerRadius={100}
+            paddingAngle={0}
+            dataKey="value"
+          >
+            {data.map((_entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 };
