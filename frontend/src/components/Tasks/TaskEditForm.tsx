@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Task } from "../types/Types";
-import { useToast } from "./Toast";
-import Button from "./Button";
+import { Task } from "../../types/Types";
+import { useToast } from "../UI/Toast";
+import Button from "../UI/Button";
 
 interface TaskEditFormProps {
   task: Task;

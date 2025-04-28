@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Button from "./Button";
-import { FormField } from "./FormField";
+import Button from "../UI/Button";
+import { FormField } from "../UI/FormField";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { changePassword, ChangePasswordData } from "../lib/api";
-import { useToast } from "./Toast";
-import { ChangePasswordFormProps, ChangePasswordSchema } from "../types/Types";
+import { changePassword, ChangePasswordData } from "../../lib/api";
+import { useToast } from "../UI/Toast";
+import { ChangePasswordFormProps, ChangePasswordSchema } from "../../types/Types";
 
 const ChangePasswordForm = ({
   onSuccess,

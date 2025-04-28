@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ProjectFormData, ProjectSchema } from "../types/Types";
-import { FormField } from "./FormField";
-import Button from "./Button";
+import { ProjectFormData, ProjectSchema } from "../../types/Types";
+import { FormField } from "../UI/FormField";
+import Button from "../UI/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 

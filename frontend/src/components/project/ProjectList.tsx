@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import Spinner from "./Spinner";
-import { formatDate, getPriorityColor, getStatusColor } from "../utils/utils";
+import Spinner from "../UI/Spinner";
+import { formatDate, getPriorityColor, getStatusColor } from "../../utils/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { ProjectData } from "../types/Types";
+import { ProjectData } from "../../types/Types";
 
 interface pr {
   projects: ProjectData[];

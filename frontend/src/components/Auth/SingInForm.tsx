@@ -1,14 +1,14 @@
-import Button from "./Button";
-import { FormField } from "./FormField";
+import Button from "../UI/Button";
+import { FormField } from "../UI/FormField";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { login, SignInData } from "../lib/api";
-import GoogleButton from "./GoogleButton";
+import { login, SignInData } from "../../lib/api";
+import GoogleButton from "../UI/GoogleButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignInSchema } from "../types/Types";
-import ThemeToggle from "./ThemeToggle";
+import { SignInSchema } from "../../types/Types";
+import ThemeToggle from "../UI/ThemeToggle";
 
 const SignInForm = () => {
   const [errorMessage, setErrorMessage] = useState("");

@@ -15,7 +15,7 @@ import {
   FC,
   ReactNode,
 } from "react";
-import { ToastPosition, ToastProps } from "../types/Types";
+import { ToastPosition, ToastProps } from "../../types/Types";
 
 export const Toast: React.FC<ToastProps> = ({
   type = "info",

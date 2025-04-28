@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
-import Button from "./Button";
-import { Task } from "../types/Types";
-import TaskEditForm from "./TaskEditForm";
-import StatusBadge from "./StatusBadge";
-import { useDeleteTask, useUpdateTask } from "../hooks/useApi";
-import { formatDate, getPriorityColor } from "../utils/utils";
+import Button from "../UI/Button";
+import { Task } from "../../types/Types";
+import TaskEditForm from "../Tasks/TaskEditForm";
+import StatusBadge from "../UI/StatusBadge";
+import { useDeleteTask, useUpdateTask } from "../../hooks/useApi";
+import { formatDate, getPriorityColor } from "../../utils/utils";
 
 interface TaskModalProps {
   task: Task;

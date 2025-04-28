@@ -12,7 +12,7 @@ import {
   getPriorityColor,
   getStatusColor,
 } from "../../utils/utils";
-import Button from "../Button";
+import Button from "../UI/Button";
 
 const ProjectHeader = ({
   project,

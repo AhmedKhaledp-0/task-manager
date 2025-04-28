@@ -14,9 +14,9 @@ import {
 import useAuth from "./useAuth";
 import { ProjectFormData, Task, TaskFormData } from "../types/Types";
 import queryClient from "../config/queryClient";
-import { useToast } from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useToast } from "../components/UI/Toast";
 
 // Project-related hooks
 export const useProjects = (opts = {}) => {

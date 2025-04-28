@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ProjectData, Task } from "../types/Types";
-import StatusBadge from "./StatusBadge";
-import { formatDate, getPriorityColor } from "../utils/utils";
+import { ProjectData, Task } from "../../types/Types";
+import StatusBadge from "../UI/StatusBadge";
+import { formatDate, getPriorityColor } from "../../utils/utils";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { useToast } from "./Toast";
-import Spinner from "./Spinner";
+import { useToast } from "../UI/Toast";
+import Spinner from "../UI/Spinner";
 
 interface TaskListItemProps {
   project: ProjectData;

@@ -6,7 +6,6 @@ import {
   faHome,
   faLayerGroup,
   faTasks,
-  faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const statsCardsList = [
@@ -39,5 +38,4 @@ export const navigationItems = [
   { path: "/", label: "Dashboard", icon: faHome },
   { path: "/projects", label: "Projects", icon: faLayerGroup },
   { path: "/tasks", label: "Tasks", icon: faTasks },
-  { path: "/reports", label: "Reports", icon: faFileAlt },
 ];

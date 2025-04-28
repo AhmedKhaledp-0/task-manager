@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkGoogleAuthStatus } from "../lib/api";
-import Spinner from "../components/Spinner";
+import Spinner from "../components/UI/Spinner";
 
 const GoogleCallback = () => {
   const [error, setError] = useState("");

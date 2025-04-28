@@ -2,7 +2,7 @@
 import { ReactElement } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { FormFieldProps } from "../types/Types";
+import { FormFieldProps } from "../../types/Types";
 
 export const FormField = ({
   type = "text",

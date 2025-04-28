@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProjectData } from "../types/Types";
+import { ProjectData } from "../../types/Types";
 
 interface ProjectDropdownProps {
   projects: ProjectData[];

@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import Button from "./Button";
-import { useToast } from "./Toast";
-import { useCreateTask } from "../hooks/useApi";
-import { Task } from "../types/Types";
+import Button from "../UI/Button";
+import { useCreateTask } from "../../hooks/useApi";
+import { Task } from "../../types/Types";
+import { useToast } from "../UI/Toast";
 
 interface CreateTaskModalProps {
   projectId: string;

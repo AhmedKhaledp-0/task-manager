@@ -3,11 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { FormField } from "./FormField";
-import Button from "./Button";
-import { ResetPasswordData, ResetPasswordSchema } from "../types/Types";
-import { resetPassword } from "../lib/api";
-import ThemeToggle from "./ThemeToggle";
+import { FormField } from "../UI//FormField";
+import Button from "../UI/Button";
+import { ResetPasswordData, ResetPasswordSchema } from "../../types/Types";
+import { resetPassword } from "../../lib/api";
+import ThemeToggle from "../UI/ThemeToggle";
 
 const ResetPasswordForm = () => {
   const { token = "" } = useParams();

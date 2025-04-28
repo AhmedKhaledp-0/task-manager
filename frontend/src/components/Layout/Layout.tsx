@@ -1,11 +1,11 @@
 import { Outlet, useLocation } from "react-router-dom";
-import UserMenu from "./UserMenu";
+import UserMenu from "../Layout/UserMenu";
 import { Link } from "react-router-dom";
-import ThemeToggle from "./ThemeToggle";
+import ThemeToggle from "../UI/ThemeToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { navigationItems } from "../utils/list";
+import { navigationItems } from "../../utils/list";
 
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

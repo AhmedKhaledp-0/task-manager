@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { getGoogleAuthUrl } from "../lib/api";
+import { getGoogleAuthUrl } from "../../lib/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import Button from "./Button";
+import Button from "../UI/Button";
 
 interface GoogleButtonProps {
   text?: string;

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import useAuth from "../hooks/useAuth";
-import { User } from "../types/Types";
-import Button from "./Button";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUser, faKey } from "@fortawesome/free-solid-svg-icons";
-import ChangePasswordModal from "./ChangePasswordModal";
+import useAuth from "../../hooks/useAuth";
+import Button from "../UI/Button";
+import ChangePasswordModal from "../Auth/ChangePasswordModal";
 
 const Profile = () => {
   const { data } = useAuth();

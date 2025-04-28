@@ -1,13 +1,13 @@
 import { useState } from "react";
-import Button from "./Button";
-import { FormField } from "./FormField";
+import Button from "../UI/Button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TaskFormData, TaskSchema } from "../types/Types";
+import { TaskFormData, TaskSchema } from "../../types/Types";
 
 
-import { useCreateTask, useProjects } from "../hooks/useApi";
-import Spinner from "./Spinner";
+import { useCreateTask, useProjects } from "../../hooks/useApi";
+import Spinner from "../UI/Spinner";
+import { FormField } from "../UI/FormField";
 
 const TaskForm = () => {
   const [errorMessage, setErrorMessage] = useState("");

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import Button from "../components/Button";
+import Button from "../components/UI/Button";
 import { useAppSelector } from "../store/store";
 import { selectEffectiveTheme } from "../store/slices/themeSlice";
 import { useEffect } from "react";
