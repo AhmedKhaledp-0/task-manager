@@ -1,11 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import Button from "./Button";
-import { useToast } from "./Toast";
-import { useAppDispatch } from "../store/hooks";
-import { createNewTask } from "../store/slices/taskSlice";
-import { Task } from "../types/Types";
+import Button from "../UI/Button";
+import { useCreateTask } from "../../hooks/useApi";
+import { Task } from "../../types/Types";
+import { useToast } from "../UI/Toast";
 
 interface CreateTaskModalProps {
   projectId: string;
@@ -20,8 +19,9 @@ const CreateTaskModal = ({
   onClose,
   onTaskCreated,
 }: CreateTaskModalProps) => {
-  const dispatch = useAppDispatch();
   const { addToast } = useToast();
+  const createTaskMutation = useCreateTask();
+  
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -35,34 +35,30 @@ const CreateTaskModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const fullISODeadline = new Date(
+      const deadlineDate = new Date(
         `${formData.deadline}T00:00:00Z`
-      ).toISOString();
+      );
 
-      const result = await dispatch(
-        createNewTask({
+      createTaskMutation.mutate(
+        {
           ...formData,
-          deadline: fullISODeadline,
+          deadline: deadlineDate,
           projectId,
-        })
-      ).unwrap();
-
-      addToast({
-        type: "success",
-        title: "Success",
-        message: "Task created successfully",
-        duration: 3000,
-      });
-
-      onTaskCreated(result);
-      onClose();
-      setFormData({
-        name: "",
-        description: "",
-        status: "todo",
-        priority: "low",
-        deadline: new Date().toISOString().split("T")[0],
-      });
+        },
+        {
+          onSuccess: (result) => {
+            onTaskCreated(result);
+            onClose();
+            setFormData({
+              name: "",
+              description: "",
+              status: "todo",
+              priority: "low",
+              deadline: new Date().toISOString().split("T")[0],
+            });
+          }
+        }
+      );
     } catch (err: any) {
       addToast({
         type: "error",
@@ -200,7 +196,12 @@ const CreateTaskModal = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Create Task</Button>
+            <Button 
+              type="submit" 
+              disabled={createTaskMutation.isPending}
+            >
+              {createTaskMutation.isPending ? "Creating..." : "Create Task"}
+            </Button>
           </div>
         </form>
       </div>

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { InsightsProject } from "../../types/Types";
-import Button from "../Button";
+import Button from "../UI/Button";
 
 const RecentProjects = ({
   projects,

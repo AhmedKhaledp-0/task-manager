@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { selectEffectiveTheme, setTheme } from "../store/slices/themeSlice";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { selectEffectiveTheme, setTheme } from "../../store/slices/themeSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
-import { updatePWATheme } from "../utils/pwaTheme";
+import { updatePWATheme } from "../../utils/pwaTheme";
 
 const ThemeToggle = () => {
   const dispatch = useAppDispatch();

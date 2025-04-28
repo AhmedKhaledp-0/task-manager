@@ -1,32 +1,21 @@
-import { useState, useEffect } from "react";
-import Button from "./Button";
-import { FormField } from "./FormField";
-import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import Button from "../UI/Button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TaskFormData, TaskSchema } from "../types/Types";
-import { createTask } from "../lib/api";
-import { useToast } from "./Toast";
-import { fetchProjects } from "../store/slices/projectSlice";
-import {
-  selectAllProjects,
-  selectProjectsLoading,
-  selectProjectsError,
-} from "../store/selectors";
-import { useAppDispatch, useAppSelector } from "../store/store";
+import { TaskFormData, TaskSchema } from "../../types/Types";
+
+
+import { useCreateTask, useProjects } from "../../hooks/useApi";
+import Spinner from "../UI/Spinner";
+import { FormField } from "../UI/FormField";
 
 const TaskForm = () => {
-  const { addToast } = useToast();
   const [errorMessage, setErrorMessage] = useState("");
-  const dispatch = useAppDispatch();
-
-  const projects = useAppSelector(selectAllProjects);
-  const projectsLoading = useAppSelector(selectProjectsLoading);
-  const projectsError = useAppSelector(selectProjectsError);
-
-  useEffect(() => {
-    dispatch(fetchProjects());
-  }, [dispatch]);
+  
+  const { data: projectsData, isLoading: projectsLoading, error: projectsError } = useProjects({
+    select: (data: { data?: { projects?: any[] } }) => data?.data?.projects || []
+  });
+  const createTaskMutation = useCreateTask();
 
   const {
     register,
@@ -41,37 +30,17 @@ const TaskForm = () => {
     },
   });
 
-  const {
-    mutate: CreateTask,
-    isPending,
-    isError,
-  } = useMutation({
-    mutationFn: (data: TaskFormData) => createTask(data),
-    onSuccess: () => {
-      setErrorMessage("");
-      addToast({
-        type: "success",
-        title: "Task Created",
-        message: "Your task has been created successfully!",
-        duration: 5000,
-      });
-      reset();
-    },
-    onError: (error: Error) => {
-      const errorMsg = error.message || "Failed to create task";
-      setErrorMessage(errorMsg);
-      addToast({
-        type: "error",
-        title: "Error",
-        message: errorMsg,
-        duration: 8000,
-      });
-    },
-  });
-
   const onSubmit = (data: TaskFormData) => {
     setErrorMessage("");
-    CreateTask(data);
+    createTaskMutation.mutate(data, {
+      onSuccess: () => {
+        reset();
+      },
+      onError: (error: Error) => {
+        const errorMsg = error.message || "Failed to create task";
+        setErrorMessage(errorMsg);
+      }
+    });
   };
 
   const statusOptions = [
@@ -86,6 +55,7 @@ const TaskForm = () => {
     { value: "high", label: "High" },
   ];
 
+  const projects = Array.isArray(projectsData) ? projectsData : [];
   const projectOptions = projectsLoading
     ? [{ value: "", label: "Loading projects..." }]
     : projects && projects.length > 0
@@ -95,20 +65,28 @@ const TaskForm = () => {
       }))
     : [{ value: "", label: "No projects available" }];
 
+  if (projectsLoading) {
+    return (
+      <div className="flex justify-center py-6">
+        <Spinner size="md" />
+      </div>
+    );
+  }
+
   return (
     <>
       <form
-        className="mt-8 flex flex-col p-6 gap-4 rounded-md shadow-md"
+        className="mt-8 flex flex-col p-6 gap-4 rounded-md shadow-md bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700"
         onSubmit={handleSubmit(onSubmit)}
       >
-        {isError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative">
-            <p className="text-sm">{errorMessage || "Invalid credentials"}</p>
+        {errorMessage && (
+          <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-md relative">
+            <p className="text-sm">{errorMessage}</p>
           </div>
         )}
 
         {projectsError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative">
+          <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-md relative">
             <p className="text-sm">Error loading projects. Please try again.</p>
           </div>
         )}
@@ -140,7 +118,7 @@ const TaskForm = () => {
           register={register}
           error={errors.deadline}
           required={true}
-          min={new Date().getDate()}
+          min={new Date().toISOString().split("T")[0]}
         />
 
         <FormField
@@ -175,10 +153,10 @@ const TaskForm = () => {
 
         <Button
           type="submit"
-          disabled={isPending || projectsLoading}
+          disabled={createTaskMutation.isPending}
           className="w-full mt-2"
         >
-          {isPending ? "Creating..." : "Create"}
+          {createTaskMutation.isPending ? "Creating..." : "Create Task"}
         </Button>
       </form>
     </>

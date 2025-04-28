@@ -1,9 +1,9 @@
 import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { logout } from "../lib/api";
+import { logout } from "../../lib/api";
 import { useMutation } from "@tanstack/react-query";
 
 const UserMenu = () => {

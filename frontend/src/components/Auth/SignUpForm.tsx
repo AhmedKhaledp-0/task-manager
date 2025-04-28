@@ -1,16 +1,16 @@
-import Button from "./Button";
-import { FormField } from "./FormField";
+import Button from "../UI/Button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { registerApi, SignUpData } from "../lib/api";
-import GoogleButton from "./GoogleButton";
+import { registerApi, SignUpData } from "../../lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignUpSchema, SignUpFormData } from "../types/Types";
-import ThemeToggle from "./ThemeToggle";
+import { SignUpSchema, SignUpFormData } from "../../types/Types";
+import ThemeToggle from "../UI/ThemeToggle";
 import { Link } from "react-router-dom";
-import { useToast } from "./Toast";
+import { useToast } from "../UI/Toast";
+import { FormField } from "../UI/FormField";
+import GoogleButton from "../UI/GoogleButton";
 
 const SignUpForm = () => {
   const [errorMessage, setErrorMessage] = useState("");

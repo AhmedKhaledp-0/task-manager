@@ -1,11 +1,11 @@
 import { useState } from "react";
 import ProjectList from "./ProjectList";
-import Button from "./Button";
+import Button from "../UI/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ProjectFormModal from "./ProjectFormModal";
-import { useCreateProject, useProjects } from "../hooks/useApi";
-import { Data, ProjectFormData, Task } from "../types/Types";
+import { useCreateProject, useProjects } from "../../hooks/useApi";
+import { Data, ProjectFormData, Task } from "../../types/Types";
 
 const Projects = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

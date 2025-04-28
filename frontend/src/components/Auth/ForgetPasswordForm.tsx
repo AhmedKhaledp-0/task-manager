@@ -1,12 +1,12 @@
-import Button from "./Button";
-import { FormField } from "./FormField";
+import Button from "../UI/Button";
+import { FormField } from "../UI/FormField";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { forgetPassword } from "../lib/api";
+import { forgetPassword } from "../../lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ForgetPasswordData, forgetPasswordSchema } from "../types/Types";
-import ThemeToggle from "./ThemeToggle";
+import { ForgetPasswordData, forgetPasswordSchema } from "../../types/Types";
+import ThemeToggle from "../UI/ThemeToggle";
 
 // Still will create the reset password page (ToDo)
 const ForgetPasswordForm = () => {

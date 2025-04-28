@@ -1,9 +1,9 @@
 import { useState } from "react";
-import TaskForm from "../components/TaskForm";
-import TaskListItem from "../components/TaskListItem";
-import Spinner from "../components/Spinner";
-import Button from "../components/Button";
-import ProjectDropdown from "../components/ProjectDropdown";
+import TaskForm from "../components/Tasks/TaskForm";
+import TaskListItem from "../components/Tasks/TaskListItem";
+import Spinner from "../components/UI/Spinner";
+import Button from "../components/UI/Button";
+import ProjectDropdown from "../components/project/ProjectDropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useProjects, useProject } from "../hooks/useApi";

@@ -1,4 +1,4 @@
-import SingInForm from "../components/SingInForm";
+import SingInForm from "../components/Auth/SingInForm";
 
 const SignIn = () => {
   return (

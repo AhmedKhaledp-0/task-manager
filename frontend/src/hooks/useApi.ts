@@ -6,14 +6,19 @@ import {
   deleteProject,
   getProjectById,
   getDashboardInsights,
+  createTask,
+  getTask,
+  updateTask,
+  deleteTask,
 } from "../lib/api";
 import useAuth from "./useAuth";
-import { ProjectFormData } from "../types/Types";
+import { ProjectFormData, Task, TaskFormData } from "../types/Types";
 import queryClient from "../config/queryClient";
-import { useToast } from "../components/Toast";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useToast } from "../components/UI/Toast";
 
+// Project-related hooks
 export const useProjects = (opts = {}) => {
   const { data: authData } = useAuth();
   const queryClient = useQueryClient();
@@ -149,6 +154,133 @@ export const useProject = (id: string | undefined, opts = {}) => {
     },
     enabled: !!id && !!authData,
     staleTime: 1000 * 60 * 5,
+    ...opts,
+  });
+};
+
+// Task-related hooks
+export const useTask = (id: string | undefined, opts = {}) => {
+  const { data: authData } = useAuth();
+  return useQuery({
+    queryKey: ["task", id],
+    queryFn: async () => {
+      if (!id) throw new Error("Task ID is required");
+      if (!authData)
+        throw new Error("User must be authenticated to fetch task");
+
+      const response = await getTask(id);
+      return response.data;
+    },
+    enabled: !!id && !!authData,
+    staleTime: 1000 * 60 * 5,
+    ...opts,
+  });
+};
+
+export const useCreateTask = (opts = {}) => {
+  const { addToast } = useToast();
+
+  return useMutation({
+    mutationFn: async (data: TaskFormData) => {
+      const response = await createTask(data);
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate related queries
+      if (variables.projectId) {
+        queryClient.invalidateQueries({ queryKey: ["project", variables.projectId] });
+      }
+      queryClient.invalidateQueries({ queryKey: ["insights"] });
+      
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "Task created successfully",
+        duration: 3000,
+      });
+    },
+    onError: (error: Error) => {
+      addToast({
+        type: "error",
+        title: "Error",
+        message: error.message || "Failed to create task",
+        duration: 5000,
+      });
+    },
+    ...opts,
+  });
+};
+
+export const useUpdateTask = (opts = {}) => {
+  const { addToast } = useToast();
+  
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Task> }) => {
+      const response = await updateTask(id, data);
+      return { ...response.data, id };
+    },
+    onSuccess: (variables) => {
+      if (variables.data.projectId) {
+        queryClient.invalidateQueries({ 
+          queryKey: ["project", variables.data.projectId] 
+        });
+      }
+      
+      // Invalidate the specific task
+      queryClient.invalidateQueries({ queryKey: ["task", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["insights"] });
+      
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "Task updated successfully",
+        duration: 3000,
+      });
+    },
+    onError: (error: Error) => {
+      addToast({
+        type: "error",
+        title: "Error",
+        message: error.message || "Failed to update task",
+        duration: 5000,
+      });
+    },
+    ...opts,
+  });
+};
+
+export const useDeleteTask = (opts = {}) => {
+  const { addToast } = useToast();
+  
+  return useMutation({
+    mutationFn: async (taskData: { id: string; projectId?: string }) => {
+      const response = await deleteTask(taskData.id);
+      return { ...response, ...taskData };
+    },
+    onSuccess: (_, variables) => {
+      // If projectId is provided, invalidate that project's data
+      if (variables.projectId) {
+        queryClient.invalidateQueries({ 
+          queryKey: ["project", variables.projectId] 
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ["insights"] });
+      
+      addToast({
+        type: "success",
+        title: "Success",
+        message: "Task deleted successfully",
+        duration: 3000,
+      });
+    },
+    onError: (error: Error) => {
+      addToast({
+        type: "error",
+        title: "Error",
+        message: error.message || "Failed to delete task",
+        duration: 5000,
+      });
+    },
     ...opts,
   });
 };
