@@ -11,6 +11,17 @@ import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+const initializeTheme = () => {
+  const storedTheme = localStorage.getItem("theme") || "light";
+    if (storedTheme === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+};
+
+initializeTheme();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
