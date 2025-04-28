@@ -1,16 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Button from "./Button";
-import { useToast } from "./Toast";
 import { Task } from "../types/Types";
 import TaskEditForm from "./TaskEditForm";
 import StatusBadge from "./StatusBadge";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import {
-  deleteExistingTask,
-  updateExistingTask,
-} from "../store/slices/taskSlice";
+import { useDeleteTask, useUpdateTask } from "../hooks/useApi";
 import { formatDate, getPriorityColor } from "../utils/utils";
 
 interface TaskModalProps {
@@ -26,43 +21,36 @@ const TaskModal = ({
   onClose,
   onTaskUpdated,
 }: TaskModalProps) => {
-  const dispatch = useAppDispatch();
-  const { addToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task>(task);
-  const loading = useAppSelector((state) => state.tasks.loading);
+  
+  const updateTaskMutation = useUpdateTask();
+  const deleteTaskMutation = useDeleteTask();
 
-  if (task.id !== currentTask.id) {
-    setCurrentTask(task);
-  }
+  // Update currentTask if the incoming task changes
+  useEffect(() => {
+    if (task.id !== currentTask.id) {
+      setCurrentTask(task);
+    }
+  }, [task, currentTask.id]);
 
   if (!isOpen) return null;
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
 
-    try {
-      setIsDeleting(true);
-      await dispatch(deleteExistingTask(currentTask.id)).unwrap();
-      addToast({
-        type: "success",
-        title: "Success",
-        message: "Task deleted successfully",
-        duration: 3000,
-      });
-      onClose();
-      onTaskUpdated();
-    } catch (err: any) {
-      addToast({
-        type: "error",
-        title: "Error",
-        message: err.message || "Failed to delete task",
-        duration: 5000,
-      });
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteTaskMutation.mutate(
+      { 
+        id: currentTask.id,
+        projectId: task.projectId 
+      },
+      {
+        onSuccess: () => {
+          onClose();
+          onTaskUpdated();
+        }
+      }
+    );
   };
 
   const handleEdit = () => {
@@ -74,25 +62,19 @@ const TaskModal = ({
   };
 
   const handleSaveEdit = async (updatedTask: Task) => {
-    try {
-      const result = await dispatch(
-        updateExistingTask({
-          id: currentTask.id,
-          data: updatedTask,
-        })
-      ).unwrap();
-
-      setCurrentTask(result);
-      setIsEditing(false);
-      onTaskUpdated(result);
-    } catch (err: any) {
-      addToast({
-        type: "error",
-        title: "Error",
-        message: err.message || "Failed to update task",
-        duration: 5000,
-      });
-    }
+    updateTaskMutation.mutate(
+      {
+        id: currentTask.id,
+        data: updatedTask
+      },
+      {
+        onSuccess: (result) => {
+          setCurrentTask({...currentTask, ...result});
+          setIsEditing(false);
+          onTaskUpdated({...currentTask, ...result});
+        }
+      }
+    );
   };
 
   return (
@@ -172,7 +154,7 @@ const TaskModal = ({
                   variant="outline"
                   size="sm"
                   onClick={handleEdit}
-                  disabled={isEditing || loading}
+                  disabled={isEditing || updateTaskMutation.isPending}
                 >
                   <FontAwesomeIcon icon={faPencil} className="mr-2" />
                   Edit
@@ -181,10 +163,10 @@ const TaskModal = ({
                   variant="destructive"
                   size="sm"
                   onClick={handleDelete}
-                  disabled={isDeleting || loading}
+                  disabled={deleteTaskMutation.isPending || updateTaskMutation.isPending}
                 >
                   <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                  {isDeleting ? "Deleting..." : "Delete"}
+                  {deleteTaskMutation.isPending ? "Deleting..." : "Delete"}
                 </Button>
               </div>
             </>

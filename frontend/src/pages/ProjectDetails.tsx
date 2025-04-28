@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProjectFormData, Task } from "../types/Types";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setSelectedTask } from "../store/slices/taskSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../components/Button";
@@ -22,16 +20,14 @@ import { useQueryClient } from "@tanstack/react-query";
 const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
-  const selectedTask = useAppSelector((state) => state.tasks.selectedTask);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const queryClient = useQueryClient();
 
   const { data: project, isLoading, error } = useProject(id);
   const deleteProjectMutation = useDeleteProject();
-
   const updateProjectMutation = useUpdateProject();
 
   const handleDelete = () => {
@@ -46,7 +42,7 @@ const ProjectDetails = () => {
   };
 
   const handleTaskClick = (task: Task) => {
-    dispatch(setSelectedTask(task));
+    setSelectedTask(task);
     setIsTaskModalOpen(true);
   };
 
@@ -165,7 +161,7 @@ const ProjectDetails = () => {
           isOpen={isTaskModalOpen}
           onClose={() => {
             setIsTaskModalOpen(false);
-            dispatch(setSelectedTask(null));
+            setSelectedTask(null);
           }}
           task={selectedTask}
           onTaskUpdated={handleTaskUpdated}

@@ -4,8 +4,6 @@ import StatusBadge from "./StatusBadge";
 import { formatDate, getPriorityColor } from "../utils/utils";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "./Toast";
-import { useAppDispatch } from "../store/hooks";
-import { fetchTask, setSelectedTask } from "../store/slices/taskSlice";
 import Spinner from "./Spinner";
 
 interface TaskListItemProps {
@@ -20,13 +18,10 @@ const TaskListItem = ({
   loading = false,
 }: TaskListItemProps) => {
   const { addToast } = useToast();
-  const dispatch = useAppDispatch();
   const { tasks = [] } = project || {};
 
-  const handleTaskClick = async (task: Task) => {
+  const handleTaskClick = (task: Task) => {
     try {
-      await dispatch(fetchTask(task.id)).unwrap();
-      dispatch(setSelectedTask(task));
       onTaskClick(task);
     } catch (err: any) {
       addToast({
@@ -54,7 +49,7 @@ const TaskListItem = ({
       {tasks.length > 0 ? (
         <div className="space-y-4">
           {tasks.map(
-            ({ id, name, description, priority, status, deadline }) => (
+            ({ id, name, description, priority, status, deadline, projectId, createdAt, updatedAt }) => (
               <div
                 key={id}
                 className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-gray-200 dark:border-zinc-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700/50 transition-colors"
@@ -66,6 +61,9 @@ const TaskListItem = ({
                     priority,
                     status,
                     deadline,
+                    projectId,
+                    createdAt,
+                    updatedAt,
                   } as Task)
                 }
               >
