@@ -35,7 +35,7 @@ import {
       if (key === "lastThirty") return "Last 30 Days";
       return "Last Year";
     };
-    
+
       const formattedData = useMemo(() => {
         const currentData = productivity[range] || [];
       
@@ -67,10 +67,10 @@ import {
                 <button
                 key={key}
                 onClick={() => setRange(key)}
-                className={`px-5 py-2 text-sm font-medium transition ${
+                className={`px-8 py-2 text-sm font-medium transition ${
                     range === key
-                    ? "bg-blue-500 text-white border-blue-500 rounded-md"
-                    : "bg-white dark:bg-zinc-800 dark:text-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-600"
+                    ? "bg-blue-500 text-white border-blue-500 rounded-full"
+                    : "bg-white dark:bg-zinc-800 dark:text-white text-gray-800 border-gray-300 hover:rounded-full hover:bg-gray-100 dark:hover:bg-zinc-600 "
                 }`}
                 >
                 {getLabel(key)}
