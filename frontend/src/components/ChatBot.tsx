@@ -7,11 +7,13 @@
  *  and receive real-time responses.
  *
  * @version 1.0.0
- * @date 2025-04-21
+ * @date 2025-04-29
  */
+
 
 import { useEffect, useState } from "react";
 import socket from "../config/socket";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
   text: string;
@@ -20,44 +22,100 @@ type Message = {
 
 /**
  * @description
- *  ChatBot component handles:
- *  - Opening and closing the chat window.
- *  - Sending messages to the backend using the "ask-gemini" socket event.
- *  - Receiving responses from Gemini via "gemini-response" socket event.
- *  - Updating the message list and rendering both user and bot messages.
+ * ChatBot component provides a user-friendly chat interface fixed at the bottom right of the screen.
+ * It enables communication with the Gemini backend service via WebSocket. Key features include:
  * 
- * @returns JSX.Element - Interactive floating chatbot component.
+ * - Toggleable floating chat window.
+ * - Message sending via the `ask-gemini` WebSocket event.
+ * - Real-time AI responses using the `gemini-response` event.
+ * - Live typing indicator while the Gemini model processes the input.
+ * - Markdown rendering for Gemini responses using `ReactMarkdown`.
+ * 
+ * @returns {JSX.Element} - Interactive floating chatbot widget.
+ * 
+ * @example
+ * // Add this to your main layout or App component
+ * <ChatBot />
  */
+
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
+  /**
+ * @function TypingIndicator
+ * @description
+ *  Renders a simple animated "Typing..." indicator while waiting for Gemini response.
+ *  Cycles through dots every 500ms.
+ * 
+ * @returns {JSX.Element} - Visual typing feedback element.
+ */
+
+  const TypingIndicator = () => {
+    const [dots, setDots] = useState("");
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setDots((prev) => (prev.length < 3 ? prev + "." : ""));
+      }, 500);
+  
+      return () => clearInterval(interval);
+    }, []);
+  
+    return (
+      <span className="italic opacity-70">Typing{dots}</span>
+    );
+  };
 
   useEffect(() => {
     socket.on("gemini-response", ({ response }) => {
-      setMessages((prev) => [...prev, { text: response, isUser: false }]);
+      setMessages((prev) => {
+        const updated = [...prev];
+        if (isTyping) {
+          updated[updated.length - 1] = { text: response, isUser: false };
+        } else {
+          updated.push({ text: response, isUser: false });
+        }
+        return updated;
+      });
+      setIsTyping(false);
     });
-
+  
     return () => {
       socket.off("gemini-response");
     };
-  }, []);
+  }, [isTyping]);
+  
+  
 
   /**
-   * @function sendMessage
-   * @description
-   *  Sends a user's message to the backend and updates the chat history.
-   *  Prevents sending if the input is empty.
-   */
+ * @function sendMessage
+ * @description
+ *  Handles sending user input to the Gemini backend. Appends the user's message
+ *  and a temporary bot placeholder message to the chat. Sends the message via WebSocket
+ *  and resets input field.
+ * 
+ * @returns {void}
+ */
+
   
   const sendMessage = () => {
     if (!userInput.trim()) return;
-    const newMessages = [...messages, { text: userInput, isUser: true }];
+  
+    const newMessages = [
+      ...messages,
+      { text: userInput, isUser: true },
+      { text: "", isUser: false }
+    ];
     setMessages(newMessages);
+    setIsTyping(true);
     socket.emit("ask-gemini", { message: userInput });
     setUserInput("");
   };
+  
 
   return (
     <>
@@ -78,7 +136,15 @@ const ChatBot = () => {
                     : "bg-white dark:bg-zinc-700 border dark:border-zinc-600 text-left self-start"
                 }`}
               >
-                {msg.text}
+                {/* {msg.text === "" && !msg.isUser ? <TypingIndicator /> : msg.text} */}
+                {msg.text === "" && !msg.isUser ? (
+                  <TypingIndicator />
+                ) : msg.isUser ? (
+                  msg.text
+                ) : (
+                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                )}
+
               </div>
             ))}
           </div>
