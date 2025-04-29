@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import socket from "../config/socket";
 import ReactMarkdown from "react-markdown";
 
+
 type Message = {
   text: string;
   isUser: boolean;
@@ -37,8 +38,6 @@ type Message = {
  * // Add this to your main layout or App component
  * <ChatBot />
  */
-
-
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -115,7 +114,7 @@ const ChatBot = () => {
     socket.emit("ask-gemini", { message: userInput });
     setUserInput("");
   };
-  
+
 
   return (
     <>
@@ -144,7 +143,6 @@ const ChatBot = () => {
                 ) : (
                   <ReactMarkdown>{msg.text}</ReactMarkdown>
                 )}
-
               </div>
             ))}
           </div>

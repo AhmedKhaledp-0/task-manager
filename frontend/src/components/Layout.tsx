@@ -17,7 +17,7 @@ const Layout = () => {
 
   return (
     <div className="h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col overflow-hidden bg-white dark:bg-zinc-900">
-      <ChatBot/>
+      <ChatBot />
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
