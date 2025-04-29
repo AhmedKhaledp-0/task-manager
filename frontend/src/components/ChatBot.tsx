@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import socket from "../config/socket";
 import ReactMarkdown from "react-markdown";
 
-
 type Message = {
   text: string;
   isUser: boolean;
@@ -114,6 +113,7 @@ const ChatBot = () => {
     socket.emit("ask-gemini", { message: userInput });
     setUserInput("");
   };
+  
 
 
   return (
