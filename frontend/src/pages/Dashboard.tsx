@@ -13,6 +13,7 @@ import StatsCards from "../components/Dashboard/StatsCards";
 import TaskOverview from "../components/Dashboard/TaskOverview";
 import RecentTasks from "../components/Dashboard/RecentTasks";
 import RecentProjects from "../components/Dashboard/RecentProjects";
+import ProductivityTrends from "../components/ProductivityTrends";
 
 const Dashboard = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -67,7 +68,16 @@ const Dashboard = () => {
 
       {/* Stats Cards */}
       <StatsCards stats={stats} />
-
+      {/* Produnctivity Trends */}
+      <ProductivityTrends
+        productivity={
+          insights?.tasks?.productivity || {
+            lastSeven: [],
+            lastThirty: [],
+            lastSixtyFive: [],
+          }
+        }
+      />
       <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-8">
         <div className="xl:col-span-1">
           <TaskOverview taskStats={taskStats} />

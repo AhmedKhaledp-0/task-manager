@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { navigationItems } from "../../utils/list";
+import ChatBot from "../ChatBot";
 
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,6 +17,7 @@ const Layout = () => {
 
   return (
     <div className="h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col overflow-hidden bg-white dark:bg-zinc-900">
+      <ChatBot />
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
