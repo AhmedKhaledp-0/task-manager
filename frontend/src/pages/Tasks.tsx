@@ -7,11 +7,13 @@ import ProjectDropdown from "../components/project/ProjectDropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useProjects, useProject } from "../hooks/useApi";
-import { Data} from "../types/Types";
+import { Data } from "../types/Types";
 
 const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+    null
+  );
 
   const {
     data: projectsData,
@@ -34,7 +36,9 @@ const Tasks = () => {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tasks</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Tasks
+        </h1>
         <Button variant="primary" onClick={() => setIsModalOpen(true)}>
           <FontAwesomeIcon icon={faPlus} className="mr-2" />
           Add Task
@@ -70,7 +74,10 @@ const Tasks = () => {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Select a Project
             </h2>
-            <ProjectDropdown projects={projects} setSelectedProjectId={setSelectedProjectId} />
+            <ProjectDropdown
+              projects={projects}
+              setSelectedProjectId={setSelectedProjectId}
+            />
           </div>
 
           {selectedProjectId && (
@@ -84,7 +91,7 @@ const Tasks = () => {
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                     {currentProject.name}
                   </h2>
-                  <TaskListItem project={currentProject} onTaskClick={() => {}} />
+                  <TaskListItem project={currentProject} />
                 </div>
               ) : null}
             </>
