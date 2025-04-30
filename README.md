@@ -106,6 +106,7 @@ EMAIL_SENDER_PASSWORD=your google app password
 EMAIL_SENDER_USERNAME=your name
 EMAIL_SENDER=your email
 REDIRECT_DOMAIN=your frontend url
+GEMINI_API_KEY=your gemini api key
 ```
 
 ### Frontend (.env)
