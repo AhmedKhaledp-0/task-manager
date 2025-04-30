@@ -156,7 +156,7 @@ const ProjectDetails = () => {
         />
       )}
 
-      {selectedTask && (
+      {selectedTask && id && (
         <TaskModal
           isOpen={isTaskModalOpen}
           onClose={() => {
@@ -165,6 +165,7 @@ const ProjectDetails = () => {
           }}
           task={selectedTask}
           onTaskUpdated={handleTaskUpdated}
+          projectId={id}
         />
       )}
 
