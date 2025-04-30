@@ -24,6 +24,7 @@ const Spinner: React.FC<SpinnerProps> = ({
     yellow: "border-yellow-500",
     purple: "border-purple-500",
     gray: "border-gray-500",
+    white: "border-white",
   };
 
   return (
