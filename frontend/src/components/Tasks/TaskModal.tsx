@@ -13,6 +13,7 @@ interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onTaskUpdated: (updatedTask?: Task) => void;
+  projectId: string;
 }
 
 const TaskModal = ({
@@ -20,10 +21,11 @@ const TaskModal = ({
   isOpen,
   onClose,
   onTaskUpdated,
+  projectId,
 }: TaskModalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task>(task);
-  
+
   const updateTaskMutation = useUpdateTask();
   const deleteTaskMutation = useDeleteTask();
 
@@ -40,15 +42,15 @@ const TaskModal = ({
     if (!window.confirm("Are you sure you want to delete this task?")) return;
 
     deleteTaskMutation.mutate(
-      { 
+      {
         id: currentTask.id,
-        projectId: task.projectId 
+        projectId: projectId,
       },
       {
         onSuccess: () => {
           onClose();
           onTaskUpdated();
-        }
+        },
       }
     );
   };
@@ -65,14 +67,14 @@ const TaskModal = ({
     updateTaskMutation.mutate(
       {
         id: currentTask.id,
-        data: updatedTask
+        data: updatedTask,
       },
       {
         onSuccess: (result) => {
-          setCurrentTask({...currentTask, ...result});
+          setCurrentTask({ ...currentTask, ...result });
           setIsEditing(false);
-          onTaskUpdated({...currentTask, ...result});
-        }
+          onTaskUpdated({ ...currentTask, ...result });
+        },
       }
     );
   };
@@ -163,7 +165,9 @@ const TaskModal = ({
                   variant="destructive"
                   size="sm"
                   onClick={handleDelete}
-                  disabled={deleteTaskMutation.isPending || updateTaskMutation.isPending}
+                  disabled={
+                    deleteTaskMutation.isPending || updateTaskMutation.isPending
+                  }
                 >
                   <FontAwesomeIcon icon={faTrash} className="mr-2" />
                   {deleteTaskMutation.isPending ? "Deleting..." : "Delete"}

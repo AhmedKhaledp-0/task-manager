@@ -217,16 +217,9 @@ export const useUpdateTask = (opts = {}) => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<Task> }) => {
       const response = await updateTask(id, data);
-      return { ...response.data, id };
+      return response.data
     },
     onSuccess: (variables) => {
-      if (variables.data.projectId) {
-        queryClient.invalidateQueries({ 
-          queryKey: ["project", variables.data.projectId] 
-        });
-      }
-      
-      // Invalidate the specific task
       queryClient.invalidateQueries({ queryKey: ["task", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["insights"] });
       
