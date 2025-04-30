@@ -15,15 +15,12 @@ import {
   useProject,
 } from "../hooks/useApi";
 import { useQueryClient } from "@tanstack/react-query";
-import TaskModal from "../components/Tasks/TaskModal";
 
 const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const queryClient = useQueryClient();
 
   const { data: project, isLoading, error } = useProject(id);
@@ -39,11 +36,6 @@ const ProjectDetails = () => {
   const handleEdit = (data: ProjectFormData) => {
     if (!id) return;
     updateProjectMutation.mutate({ id, data });
-  };
-
-  const handleTaskClick = (task: Task) => {
-    setSelectedTask(task);
-    setIsTaskModalOpen(true);
   };
 
   const handleTaskUpdated = (updatedTask?: Task) => {
@@ -131,8 +123,8 @@ const ProjectDetails = () => {
               {project && (
                 <TaskListItem
                   project={project}
-                  onTaskClick={handleTaskClick}
                   loading={isLoading}
+                  onTaskUpdated={handleTaskUpdated}
                 />
               )}
             </div>
@@ -153,19 +145,6 @@ const ProjectDetails = () => {
             deadline: new Date(project.deadline),
           }}
           title="Edit Project"
-        />
-      )}
-
-      {selectedTask && id && (
-        <TaskModal
-          isOpen={isTaskModalOpen}
-          onClose={() => {
-            setIsTaskModalOpen(false);
-            setSelectedTask(null);
-          }}
-          task={selectedTask}
-          onTaskUpdated={handleTaskUpdated}
-          projectId={id}
         />
       )}
 
