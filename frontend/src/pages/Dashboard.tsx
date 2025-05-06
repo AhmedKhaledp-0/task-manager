@@ -14,7 +14,7 @@ import TaskOverview from "../components/Dashboard/TaskOverview";
 import RecentTasks from "../components/Dashboard/RecentTasks";
 import RecentProjects from "../components/Dashboard/RecentProjects";
 import ProductivityTrends from "../components/ProductivityTrends";
-
+import mockProductivity from "../components/mockProductivity"
 const Dashboard = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const createProjectMutation = useCreateProject();
@@ -69,7 +69,7 @@ const Dashboard = () => {
       {/* Stats Cards */}
       <StatsCards stats={stats} />
       {/* Produnctivity Trends */}
-      <ProductivityTrends
+      {/* <ProductivityTrends
         productivity={
           insights?.tasks?.productivity || {
             lastSeven: [],
@@ -77,7 +77,8 @@ const Dashboard = () => {
             lastSixtyFive: [],
           }
         }
-      />
+      /> */}
+      <ProductivityTrends productivity={mockProductivity} />
       <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-8">
         <div className="xl:col-span-1">
           <TaskOverview taskStats={taskStats} />

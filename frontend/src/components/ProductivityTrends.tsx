@@ -65,9 +65,9 @@ const ProductivityTrends = ({ productivity }: Props) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md dark:bg-zinc-800 mb-6">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 flex flex-wrap gap-2">
         <h2 className="text-lg font-semibold">Productivity Trends</h2>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 text-xs sm:text-sm">
           {(["lastSeven", "lastThirty", "lastSixtyFive"] as const).map(
             (key) => (
               <button
