@@ -122,9 +122,9 @@ export const createProject = async (data: any) => {
   }
 };
 
-export const getProjects = async () => {
+export const getProjects = async (page = 1, limit = 10) => {
   try {
-    const response = await Api.get("/projects?page=1&limit=10");
+    const response = await Api.get(`/projects?page=${page}&limit=${limit}`);
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Failed to fetch projects");
