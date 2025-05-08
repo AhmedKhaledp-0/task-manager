@@ -39,7 +39,6 @@ const Layout = () => {
           }`}
         />
       </button>
-
       <div className="flex flex-1 overflow-hidden">
         {/* Floating Sidebar */}
         <aside
@@ -63,6 +62,9 @@ const Layout = () => {
         >
           <div className="p-6 flex-grow overflow-y-auto rounded-t-2xl">
             <div className="space-y-2">
+              <h2 className="text-3xl px-5 py-4 font-extrabold tracking-tight font-mono mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 text-transparent bg-clip-text">
+                ToTasky
+              </h2>
               {navigationItems.map(({ path, icon, label }) => (
                 <Link
                   key={path}
