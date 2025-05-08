@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import Spinner from "../UI/Spinner";
-import { formatDate, getPriorityColor, getStatusColor } from "../../utils/utils";
+import {
+  formatDate,
+  getPriorityColor,
+  getStatusColor,
+} from "../../utils/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { ProjectData } from "../../types/Types";
+import ProjectSkeleton from "./ProjectSkeleton";
 
 interface pr {
   projects: ProjectData[];
@@ -20,8 +24,10 @@ const ProjectList = ({ projects, isLoading, error }: pr) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <Spinner />
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <ProjectSkeleton key={index} />
+        ))}
       </div>
     );
   }

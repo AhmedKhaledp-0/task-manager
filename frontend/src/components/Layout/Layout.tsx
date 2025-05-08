@@ -91,7 +91,7 @@ const Layout = () => {
         )}
 
         <main className="flex-grow p-4 lg:p-6 overflow-auto bg-gray-50 dark:bg-zinc-900 lg:ml-6">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto h-full ">
             <Outlet />
           </div>
         </main>

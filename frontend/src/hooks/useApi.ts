@@ -19,7 +19,7 @@ import { useEffect } from "react";
 import { useToast } from "../components/UI/Toast";
 
 // Project-related hooks
-export const useProjects = (opts = {}) => {
+export const useProjects = (opts = {}, page = 1, limit = 10) => {
   const { data: authData } = useAuth();
   const queryClient = useQueryClient();
 
@@ -32,8 +32,8 @@ export const useProjects = (opts = {}) => {
   }, [authData, queryClient]);
 
   const { data, ...rest } = useQuery({
-    queryKey: ["projects"],
-    queryFn: getProjects,
+    queryKey: ["projects", page, limit],
+    queryFn: () => getProjects(page, limit),
     staleTime: Infinity,
     enabled: !!authData,
     ...opts,
