@@ -7,7 +7,8 @@ import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { navigationItems } from "../../utils/list";
 import ChatBot from "../ChatBot";
-
+import logo from "../../../public/logo.svg"
+import logo2 from "../../../public/logo2.svg"
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -39,7 +40,6 @@ const Layout = () => {
           }`}
         />
       </button>
-
       <div className="flex flex-1 overflow-hidden">
         {/* Floating Sidebar */}
         <aside
@@ -63,6 +63,19 @@ const Layout = () => {
         >
           <div className="p-6 flex-grow overflow-y-auto rounded-t-2xl">
             <div className="space-y-2">
+              <h2 className="text-3xl px-5 py-4 font-extrabold tracking-tight font-mono mb-4 bg-gradient-to-r from-zinc-900 via-zinc-500 to-zinc-100 dark:from-zinc-500 dark:via-zinc-200 to-zinc-100 text-transparent bg-clip-text">
+                <img
+                  src={logo}
+                  alt="Logo Light"
+                  className="w-8 h-8 inline-block mr-2 dark:hidden"
+                />
+                <img
+                  src={logo2}
+                  alt="Logo Dark"
+                  className="w-8 h-8 inline-block mr-2 hidden dark:inline-block"
+                />
+                ToTasky
+              </h2>
               {navigationItems.map(({ path, icon, label }) => (
                 <Link
                   key={path}
