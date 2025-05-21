@@ -54,48 +54,48 @@ export const Toast: React.FC<ToastProps> = ({
   // Configuration for each toast type with dark mode support
   const typeConfig = {
     info: {
-      bg: "bg-primary-50 dark:bg-primary-900/20",
+      bg: "bg-white dark:bg-neutral-800",
       border: "border-l-4 border-primary-500 dark:border-primary-400",
       icon: (
         <FontAwesomeIcon
           icon={faInfoCircle}
-          className="text-primary-500 dark:text-primary-400 text-lg"
+          className="text-lg text-primary-500 dark:text-primary-400"
         />
       ),
-      iconBg: "bg-primary-100 dark:bg-primary-900/30",
+      iconBg: "bg-primary-100 dark:bg-primary-900",
     },
     success: {
-      bg: "bg-success-50 dark:bg-success-900/20",
+      bg: "bg-white dark:bg-neutral-800",
       border: "border-l-4 border-success-500 dark:border-success-400",
       icon: (
         <FontAwesomeIcon
           icon={faCircleCheck}
-          className="text-success-500 dark:text-success-400 text-lg"
+          className="text-lg text-success-500 dark:text-success-400"
         />
       ),
-      iconBg: "bg-success-100 dark:bg-success-900/30",
+      iconBg: "bg-success-100 dark:bg-success-900",
     },
     warning: {
-      bg: "bg-warning-50 dark:bg-warning-900/20",
+      bg: "bg-white dark:bg-neutral-800",
       border: "border-l-4 border-warning-500 dark:border-warning-400",
       icon: (
         <FontAwesomeIcon
           icon={faWarning}
-          className="text-warning-500 dark:text-warning-400 text-lg"
+          className="text-lg text-warning-500 dark:text-warning-400"
         />
       ),
-      iconBg: "bg-warning-100 dark:bg-warning-900/30",
+      iconBg: "bg-warning-100 dark:bg-warning-900",
     },
     error: {
-      bg: "bg-danger-50 dark:bg-danger-900/20",
+      bg: "bg-white dark:bg-neutral-800",
       border: "border-l-4 border-danger-500 dark:border-danger-400",
       icon: (
         <FontAwesomeIcon
           icon={faCircleXmark}
-          className="text-danger-500 dark:text-danger-400 text-lg"
+          className="text-lg text-danger-500 dark:text-danger-400"
         />
       ),
-      iconBg: "bg-danger-100 dark:bg-danger-900/30",
+      iconBg: "bg-danger-100 dark:bg-danger-900",
     },
   };
 
@@ -128,7 +128,7 @@ export const Toast: React.FC<ToastProps> = ({
         ${getPositionClasses(position)} 
         max-w-sm 
         w-full 
-        shadow-hard
+        shadow-lg
         rounded-lg 
         overflow-hidden 
         ${bg}
@@ -136,6 +136,9 @@ export const Toast: React.FC<ToastProps> = ({
         p-4 
         transition-all 
         duration-300 
+        z-50
+        backdrop-blur-sm
+        backdrop-filter
         ${isLeaving ? "opacity-0 transform translate-y-2" : "opacity-100"} 
         ${className}
       `}
@@ -151,18 +154,18 @@ export const Toast: React.FC<ToastProps> = ({
         )}
         <div className="flex-1 pt-0.5">
           {title && (
-            <div className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+            <div className="mb-1 font-semibold text-neutral-900 dark:text-white">
               {title}
             </div>
           )}
-          <div className="text-sm text-neutral-700 dark:text-neutral-300">
+          <div className="text-sm text-neutral-800 dark:text-neutral-200">
             {message}
           </div>
         </div>
         {showCloseButton && (
           <button
             type="button"
-            className="ml-4 text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 focus:outline-none transition-colors duration-200"
+            className="ml-4 transition-colors duration-200 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500 dark:focus:ring-neutral-400"
             onClick={handleClose}
             aria-label="Close"
           >
@@ -207,9 +210,15 @@ export const ToastProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
 
-      {toasts.map((toast) => (
-        <Toast key={toast.id} {...toast} />
-      ))}
+      <div className="toast-container">
+        {toasts.map((toast, index) => (
+          <Toast
+            key={toast.id}
+            {...toast}
+            className={`toast-item ${index > 0 ? "mt-3" : ""}`}
+          />
+        ))}
+      </div>
     </ToastContext.Provider>
   );
 };
