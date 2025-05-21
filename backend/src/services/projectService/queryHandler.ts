@@ -36,7 +36,7 @@ const registry: Registry[] = [
   {
     condition: (query: Query) => !query.search,
     handler: (query: Query) =>
-      getProjects(query.userId, query.page | 1, query.limit | 10),
+      getProjects(query.userId, query.page || 1, query.limit || 10),
   },
   {
     condition: (query: Query) => !!query.search,

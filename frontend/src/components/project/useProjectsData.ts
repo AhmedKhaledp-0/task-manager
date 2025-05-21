@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useProjects, useCreateProject } from "../../hooks/useApi";
 import { Data, ProjectData, ProjectFormData } from "../../types/Types";
 import { getProjects } from "../../lib/api";
-import { areFiltersActive, filterAndSortProjects, FilterState, DEFAULT_FILTERS } from "./projectUtils";
+import {
+  areFiltersActive,
+  filterAndSortProjects,
+  FilterState,
+  DEFAULT_FILTERS,
+} from "./projectUtils";
 
 export function useProjectsData(initialPage = 1, limit = 10) {
   const [currentPage, setCurrentPage] = useState(initialPage);
@@ -37,6 +42,10 @@ export function useProjectsData(initialPage = 1, limit = 10) {
   }, [projectsData]);
 
   const fetchAllPages = useCallback(async () => {
+    if (isLoadingAllPages) {
+      return;
+    }
+
     isFetchingCancelled.current = false;
     setIsLoadingAllPages(true);
 
@@ -84,7 +93,7 @@ export function useProjectsData(initialPage = 1, limit = 10) {
         setIsLoadingAllPages(false);
       }
     }
-  }, [currentPage, totalPages, limit, currentPageProjects]);
+  }, [currentPage, totalPages, limit, currentPageProjects, isLoadingAllPages]);
 
   useEffect(() => {
     return () => {
@@ -92,32 +101,71 @@ export function useProjectsData(initialPage = 1, limit = 10) {
     };
   }, [currentPage, totalPages]);
 
-  useEffect(() => {
-    const shouldUseAllPages = hasActiveFilters && allProjectsPages.length > 0;
-    const projectsToFilter = shouldUseAllPages
-      ? allProjectsPages
-      : currentPageProjects;
-
-    const result = filterAndSortProjects(projectsToFilter, filters);
-    setFilteredProjects(result);
-  }, [allProjectsPages, currentPageProjects, filters, hasActiveFilters]);
+  const checkActiveFilters = useCallback(() => {
+    return areFiltersActive(filters);
+  }, [filters]);
 
   useEffect(() => {
-    const activeFilters = areFiltersActive(filters);
-    setHasActiveFilters(activeFilters);
-    if (activeFilters && totalPages > 1 && allProjectsPages.length === 0) {
+    const isActive = checkActiveFilters();
+    setHasActiveFilters(isActive);
+  }, [checkActiveFilters]);
+
+  useEffect(() => {
+    if (
+      hasActiveFilters &&
+      totalPages > 1 &&
+      allProjectsPages.length === 0 &&
+      !isLoadingAllPages
+    ) {
       fetchAllPages();
     }
-  }, [filters, totalPages, fetchAllPages, allProjectsPages.length]);
+  }, [
+    hasActiveFilters,
+    totalPages,
+    allProjectsPages.length,
+    fetchAllPages,
+    isLoadingAllPages,
+  ]);
 
-  const handleAddProject = useCallback((data: ProjectFormData) => {
-    createProjectMutation.mutate(data, {
-      onSuccess: () => {
-        setAllProjectsPages([]);
-        refetch();
-      },
-    });
-  }, [createProjectMutation, refetch]);
+  const filterProjectsData = useCallback(() => {
+    if (
+      (currentPageProjects.length === 0 && allProjectsPages.length === 0) ||
+      isLoadingAllPages
+    ) {
+      return [];
+    }
+    const projectsToFilter =
+      hasActiveFilters && allProjectsPages.length > 0
+        ? allProjectsPages
+        : currentPageProjects;
+
+    return filterAndSortProjects(projectsToFilter, filters);
+  }, [
+    currentPageProjects,
+    allProjectsPages,
+    filters,
+    hasActiveFilters,
+    isLoadingAllPages,
+  ]);
+
+  useEffect(() => {
+    const filtered = filterProjectsData();
+    if (filtered.length > 0 || filteredProjects.length > 0) {
+      setFilteredProjects(filtered);
+    }
+  }, [filterProjectsData, filteredProjects.length]);
+
+  const handleAddProject = useCallback(
+    (data: ProjectFormData) => {
+      createProjectMutation.mutate(data, {
+        onSuccess: () => {
+          setAllProjectsPages([]);
+          refetch();
+        },
+      });
+    },
+    [createProjectMutation, refetch]
+  );
 
   const handlePageChange = useCallback(
     (newPage: number) => {
@@ -169,7 +217,7 @@ export function useProjectsData(initialPage = 1, limit = 10) {
     isLoading: isProjectsLoading,
     isLoadingAllPages,
     error,
-    
+
     handleSearch,
     handleFilterChange,
     handleSortChange,

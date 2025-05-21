@@ -10,10 +10,10 @@
  * @copyright Copyrights (c) 2025
  */
 
-import { users, projects, tasks } from "../src/types/prisma";
+import { users, projects, tasks } from "../types/prisma";
 import { faker } from "@faker-js/faker";
-import { prisma } from "./configs/prisma";
-import { hashPassword } from "./utils/bcryption";
+import { prisma } from "../configs/prisma";
+import { hashPassword } from "../utils/bcryption";
 
 /**
  * Randomizer util is for selecting any random element/elements
