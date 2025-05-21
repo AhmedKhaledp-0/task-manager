@@ -14,11 +14,18 @@ import { useEffect, useState, useRef } from "react";
 import socket from "../config/socket";
 import ReactMarkdown from "react-markdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPaperPlane,
+  faTimes,
+  faRocket,
+} from "@fortawesome/free-solid-svg-icons";
+import { useCreateProject, useCreateTask } from "../hooks/useApi";
+import { useToast } from "../components/UI/Toast";
 
 type Message = {
   text: string;
   isUser: boolean;
+  isJson?: boolean;
 };
 
 /**
@@ -47,6 +54,10 @@ const ChatBot = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const { addToast } = useToast();
+  const createProjectMutation = useCreateProject();
+  const createTaskMutation = useCreateTask();
+
   /**
    * @function TypingIndicator
    * @description
@@ -58,9 +69,9 @@ const ChatBot = () => {
   const TypingIndicator = () => {
     return (
       <div className="flex items-center space-x-1">
-        <span className="h-2 w-2 bg-gray-400 dark:bg-gray-300 rounded-full animate-pulse"></span>
-        <span className="h-2 w-2 bg-gray-400 dark:bg-gray-300 rounded-full animate-pulse delay-150"></span>
-        <span className="h-2 w-2 bg-gray-400 dark:bg-gray-300 rounded-full animate-pulse delay-300"></span>
+        <span className="w-2 h-2 bg-gray-400 rounded-full dark:bg-gray-300 animate-pulse"></span>
+        <span className="w-2 h-2 delay-150 bg-gray-400 rounded-full dark:bg-gray-300 animate-pulse"></span>
+        <span className="w-2 h-2 delay-300 bg-gray-400 rounded-full dark:bg-gray-300 animate-pulse"></span>
       </div>
     );
   };
@@ -89,12 +100,101 @@ const ChatBot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const projectCreationRef = useRef<Set<string>>(new Set());
+
   useEffect(() => {
     socket.on("gemini-response", ({ response }) => {
       setMessages((prev) => {
         const updated = [...prev];
         if (isTyping) {
-          updated[updated.length - 1] = { text: response, isUser: false };
+          let isJson = false;
+          try {
+            if (
+              response.trim().startsWith("{") &&
+              response.trim().endsWith("}")
+            ) {
+              const parsedResponse = JSON.parse(response);
+
+              const responseHash = JSON.stringify(parsedResponse);
+              if (
+                parsedResponse.project &&
+                parsedResponse.tasks &&
+                !projectCreationRef.current.has(responseHash)
+              ) {
+                isJson = true;
+
+                projectCreationRef.current.add(responseHash);
+
+                setTimeout(() => {
+                  const projectData = {
+                    name: parsedResponse.project.name,
+                    description: parsedResponse.project.description || "",
+                    status: parsedResponse.project.status,
+                    priority: parsedResponse.project.priority,
+                    deadline: new Date(parsedResponse.project.deadline),
+                  };
+
+                  createProjectMutation.mutate(projectData, {
+                    onSuccess: (createdProject) => {
+                      if (
+                        parsedResponse.tasks &&
+                        Array.isArray(parsedResponse.tasks)
+                      ) {
+                        parsedResponse.tasks.forEach(
+                          (taskData: {
+                            name: string;
+                            description?: string;
+                            status: string;
+                            priority: string;
+                            deadline: string;
+                          }) => {
+                            const newTask = {
+                              name: taskData.name,
+                              description: taskData.description || "",
+                              status: taskData.status,
+                              priority: taskData.priority,
+                              deadline: new Date(taskData.deadline),
+                              projectId: createdProject.id,
+                            };
+                            createTaskMutation.mutate(newTask);
+                          }
+                        );
+                      }
+
+                      // Replace JSON response with success message
+                      setMessages((messages) => {
+                        const updatedMessages = [...messages];
+                        const lastIndex = updatedMessages.length - 1;
+                        if (lastIndex >= 0) {
+                          updatedMessages[lastIndex] = {
+                            text: "Project created successfully with all tasks!",
+                            isUser: false,
+                          };
+                        }
+                        return updatedMessages;
+                      });
+                    },
+                    onError: (error) => {
+                      addToast({
+                        type: "error",
+                        title: "Error",
+                        message: `Failed to create project: ${error.message}`,
+                        duration: 5000,
+                      });
+                    },
+                  });
+                }, 0);
+              }
+            }
+          } catch (e) {
+            isJson = false;
+          }
+
+          updated[updated.length - 1] = {
+            text: response,
+            isUser: false,
+            isJson,
+          };
         } else {
           updated.push({ text: response, isUser: false });
         }
@@ -106,7 +206,7 @@ const ChatBot = () => {
     return () => {
       socket.off("gemini-response");
     };
-  }, [isTyping]);
+  }, [isTyping, createProjectMutation, createTaskMutation, addToast]);
 
   /**
    * @function sendMessage
@@ -131,6 +231,33 @@ const ChatBot = () => {
     setUserInput("");
   };
 
+  /**
+   * @function useProjectCreator
+   * @description
+   *  Helper function that prepends "I want to create project" to user's input
+   *  to trigger the project creation flow while preserving any existing input
+   *
+   * @returns {void}
+   */
+  const useProjectCreator = () => {
+    const currentInput = userInput.trim();
+    // If user already has text, preserve it by prepending the trigger phrase
+    if (currentInput) {
+      // Only prepend if the input doesn't already start with the phrase
+      if (!currentInput.toLowerCase().startsWith("i want to create project")) {
+        setUserInput(`I want to create project ${currentInput}`);
+      }
+    } else {
+      // If input is empty, just set the trigger phrase
+      setUserInput("I want to create project ");
+    }
+
+    // Set focus to the input field after updating
+    setTimeout(() => {
+      document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+    }, 0);
+  };
+
   const toggleChat = () => setIsOpen(!isOpen);
 
   return (
@@ -142,28 +269,37 @@ const ChatBot = () => {
           className="fixed bottom-28 right-4 w-80 sm:w-96 max-h-[600px] bg-white dark:bg-zinc-800 shadow-2xl border border-gray-100 dark:border-zinc-700 rounded-xl flex flex-col overflow-hidden z-50 text-gray-800 dark:text-zinc-100 transition-all duration-300 ease-in-out"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-700 to-blue-600 dark:from-zinc-800 dark:to-zinc-700 text-white px-5 py-4 flex justify-between items-center shadow-sm">
+          <div className="flex items-center justify-between px-5 py-4 text-white shadow-sm bg-gradient-to-r from-blue-700 to-blue-600 dark:from-zinc-800 dark:to-zinc-700">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white/20">
                 <img src="/chatbot-icon.png" alt="Bot" className="w-6 h-6" />
               </div>
-              <h4 className="font-bold text-lg">ToTaskyGPT</h4>
+              <h4 className="text-lg font-bold">ToTaskyGPT</h4>
             </div>
             <button
               onClick={toggleChat}
-              className="text-xl rounded-full hover:bg-white/10 w-8 h-8 flex items-center justify-center transition-colors"
+              className="flex items-center justify-center w-8 h-8 text-xl transition-colors rounded-full hover:bg-white/10"
               aria-label="Close chat"
             >
-              <FontAwesomeIcon icon={faTimes} className="h-5 w-5" />
+              <FontAwesomeIcon icon={faTimes} className="w-5 h-5" />
             </button>
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/80 dark:bg-zinc-900/50 backdrop-blur-sm">
+          <div className="flex-1 p-4 space-y-3 overflow-y-auto bg-gray-50/80 dark:bg-zinc-900/50 backdrop-blur-sm">
             {messages.length === 0 && (
-              <div className="text-center py-8 opacity-60 italic">
-                Start a conversation with ToTaskyGPT
-              </div>
+              <>
+                <div className="py-8 italic text-center opacity-60">
+                  Start a conversation with ToTaskyGPT
+                </div>
+                <div
+                  className="flex items-center justify-center px-4 py-3 text-blue-700 transition-all bg-blue-100 cursor-pointer dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-800/40 dark:text-blue-300 rounded-xl"
+                  onClick={useProjectCreator}
+                >
+                  <FontAwesomeIcon icon={faRocket} className="mr-2" />
+                  <span>Use AI to create a new project</span>
+                </div>
+              </>
             )}
 
             {messages.map((msg, idx) => (
@@ -185,7 +321,7 @@ const ChatBot = () => {
                   ) : msg.isUser ? (
                     msg.text
                   ) : (
-                    <div className="prose prose-sm dark:prose-invert">
+                    <div className="prose-sm prose dark:prose-invert">
                       <ReactMarkdown>{msg.text}</ReactMarkdown>
                     </div>
                   )}
@@ -196,7 +332,7 @@ const ChatBot = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-3 border-t border-gray-100 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex gap-2 items-center">
+          <div className="flex items-center gap-2 p-3 bg-white border-t border-gray-100 dark:border-zinc-700 dark:bg-zinc-800">
             <input
               type="text"
               className="flex-1 border border-gray-200 dark:border-zinc-700 bg-white/60 dark:bg-zinc-700/60 text-gray-800 dark:text-zinc-100 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 transition-all"
@@ -210,7 +346,7 @@ const ChatBot = () => {
               className="bg-blue-600 dark:bg-blue-700 text-white p-2.5 rounded-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center justify-center"
               aria-label="Send message"
             >
-              <FontAwesomeIcon icon={faPaperPlane} className="h-5 w-5" />
+              <FontAwesomeIcon icon={faPaperPlane} className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -220,7 +356,7 @@ const ChatBot = () => {
       <button
         onClick={toggleChat}
         data-chat-toggle="true"
-        className="fixed bottom-12 right-6 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 dark:from-blue-600 dark:to-blue-800 text-white rounded-full shadow-lg hover:shadow-blue-500/30 dark:hover:shadow-blue-700/20 flex items-center justify-center z-50 transition-all duration-300 hover:scale-105"
+        className="fixed z-50 flex items-center justify-center text-white transition-all duration-300 rounded-full shadow-lg bottom-12 right-6 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 dark:from-blue-600 dark:to-blue-800 hover:shadow-blue-500/30 dark:hover:shadow-blue-700/20 hover:scale-105"
         aria-label="Open chat"
       >
         <img src="/chatbot-icon.png" alt="Chat" className="w-8 h-8" />

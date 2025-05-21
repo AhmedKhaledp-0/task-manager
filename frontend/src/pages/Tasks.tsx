@@ -251,8 +251,8 @@ const Tasks = () => {
   }, [selectedProjectId, allProjects]);
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="mx-auto max-w-7xl">
+      <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Tasks
         </h1>
@@ -263,13 +263,13 @@ const Tasks = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-lg w-[600px] max-w-full h-auto max-h-[90vh] relative overflow-y-auto">
             <div className="mb-4">
-              <h2 className="font-bold text-2xl">Create New Task</h2>
+              <h2 className="text-2xl font-bold">Create New Task</h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-red-500 text-xl"
+                className="absolute text-xl text-gray-600 top-4 right-4 dark:text-gray-300 hover:text-red-500"
               >
                 ✕
               </button>
@@ -284,17 +284,17 @@ const Tasks = () => {
           <Spinner size="lg" />
         </div>
       ) : projectsError ? (
-        <p className="text-red-500 text-center">{projectsError.message}</p>
+        <p className="text-center text-red-500">{projectsError.message}</p>
       ) : (
         <div className="space-y-6">
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
               Select a Project
             </h2>
             <div className="relative" ref={projectSelectorRef}>
               <button
                 onClick={() => setIsProjectSelectorOpen(!isProjectSelectorOpen)}
-                className="flex items-center justify-between w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-sm text-left focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex items-center justify-between w-full px-4 py-3 text-left bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <span className="block truncate">{selectedProjectName}</span>
                 <FontAwesomeIcon
@@ -306,19 +306,19 @@ const Tasks = () => {
               </button>
 
               {isProjectSelectorOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-white dark:bg-zinc-800 shadow-lg max-h-96 rounded-md overflow-auto border border-gray-300 dark:border-zinc-700">
-                  <div className="sticky top-0 z-10 bg-white dark:bg-zinc-800 p-2 border-b border-gray-300 dark:border-zinc-700">
+                <div className="absolute z-10 w-full mt-1 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg dark:bg-zinc-800 max-h-96 dark:border-zinc-700">
+                  <div className="sticky top-0 z-10 p-2 bg-white border-b border-gray-300 dark:bg-zinc-800 dark:border-zinc-700">
                     <div className="relative">
                       <input
                         type="text"
                         placeholder="Search projects..."
                         value={projectSearchTerm}
                         onChange={(e) => setProjectSearchTerm(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-zinc-700 rounded-md bg-gray-50 dark:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md dark:border-zinc-700 bg-gray-50 dark:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                       <FontAwesomeIcon
                         icon={faSearch}
-                        className="absolute right-3 top-3 text-gray-400 dark:text-gray-500"
+                        className="absolute text-gray-400 right-3 top-3 dark:text-gray-500"
                       />
                     </div>
                   </div>
@@ -335,7 +335,7 @@ const Tasks = () => {
                         <li
                           key={project.id}
                           onClick={() => handleSelectProject(project)}
-                          className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer flex items-start"
+                          className="flex items-start px-4 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-700"
                         >
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center">
@@ -348,17 +348,17 @@ const Tasks = () => {
                                     : "bg-yellow-500"
                                 }`}
                               ></div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                              <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
                                 {project.name}
                               </p>
                             </div>
                             {project.description && (
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                              <p className="mt-1 text-xs text-gray-500 truncate dark:text-gray-400">
                                 {project.description}
                               </p>
                             )}
                           </div>
-                          <div className="ml-2 flex-shrink-0">
+                          <div className="flex-shrink-0 ml-2">
                             <span
                               className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                 project.priority === "high"
@@ -392,7 +392,7 @@ const Tasks = () => {
                 <p className="text-red-500">{projectError.message}</p>
               ) : currentProject ? (
                 <div className="pb-4">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
                     {currentProject.name}
                   </h2>
 
@@ -418,11 +418,11 @@ const Tasks = () => {
                     filteredTasks.length === 0 &&
                     currentProject.tasks &&
                     currentProject.tasks.length > 0 && (
-                      <div className="bg-gray-50 dark:bg-zinc-800 rounded-lg p-8 text-center my-6 border border-gray-200 dark:border-zinc-700">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      <div className="p-8 my-6 text-center border border-gray-200 rounded-lg bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700">
+                        <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-white">
                           No tasks match your filters
                         </h3>
-                        <p className="text-gray-500 dark:text-gray-400 mb-4">
+                        <p className="mb-4 text-gray-500 dark:text-gray-400">
                           Try adjusting your search criteria or clear filters
                         </p>
                         <Button variant="outline" onClick={handleClearFilters}>
